@@ -1,4 +1,4 @@
-package com.example.SpringBootWeb.entities;
+package com.example.SpringBootWeb.entities.models;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -40,22 +40,17 @@ public class User {
     @UuidGenerator
     private UUID id;
 
-    @NotNull
     @Size(min = 3, max = 50)
     @Column(nullable = false, length = 50)
     private String firstName;
 
-    @NotNull
     @Size(min = 3, max = 50)
     @Column(nullable = false, length = 50)
     private String lastName;
 
-    @NotNull
-    @Email
     @Column(nullable = false, unique = true)
     private String email;
 
-    @NotNull
     @Column(nullable = false)
     private String password;
 

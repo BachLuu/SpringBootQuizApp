@@ -1,35 +1,38 @@
 package com.example.SpringBootWeb.services.jwt;
 
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
-
-import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 
+import javax.crypto.SecretKey;
+
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+
+import com.example.SpringBootWeb.entities.jwt.JwtProperties;
+import com.example.SpringBootWeb.entities.models.RefreshToken;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class JwtTokenUtil {
-    @Value("${jwt.secret}")
-    private String SECRET_KEY;
-    @Value("${jwt.expiration}")
-    private static long expirationTime;
+    private final JwtProperties props;
+
     private SecretKey key;
 
     @PostConstruct
     public void init() {
-        this.key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+        this.key = Keys.hmacShaKeyFor(props.secret().getBytes(StandardCharsets.UTF_8));
     }
-
 
     public String extractUserSubject(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -52,12 +55,14 @@ public class JwtTokenUtil {
 
     private String createToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(subject)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
-                .signWith(key, SignatureAlgorithm.HS256)
+                .claims(claims)
+                .subject(subject)
+                .id(UUID.randomUUID().toString())
+                .issuedAt(new Date(System.currentTimeMillis())) // thay cho set
+                .expiration(new Date(System.currentTimeMillis() + props.expiration())) // thay cho setEx
+                .signWith(key) // chỉ cần key, không cần SignatureA
                 .compact();
+
     }
 
     private boolean isTokenExpired(String token) {
@@ -74,5 +79,15 @@ public class JwtTokenUtil {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
+    }
+
+    public RefreshToken generateRefreshToken(UserDetails userDetails) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("type", "refresh");
+        String token = createToken(claims, userDetails.getUsername());
+        return RefreshToken.builder()
+                .token(token)
+                .expiryDate(Instant.now().plusMillis(props.refreshExpiration()))
+                .build();
     }
 }

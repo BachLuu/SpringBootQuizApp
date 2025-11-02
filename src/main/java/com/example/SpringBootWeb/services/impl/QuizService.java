@@ -1,17 +1,17 @@
-package com.example.SpringBootWeb.services;
-
-import com.example.SpringBootWeb.dtos.UpdateQuizDto;
-import com.example.SpringBootWeb.entities.Quiz;
-import com.example.SpringBootWeb.repositories.QuizRepository;
-
-import com.example.SpringBootWeb.services.interfaces.IQuizService;
-import lombok.RequiredArgsConstructor;
-
-import org.springframework.stereotype.Service;
+package com.example.SpringBootWeb.services.impl;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+
+import com.example.SpringBootWeb.dtos.UpdateQuizDto;
+import com.example.SpringBootWeb.entities.models.Quiz;
+import com.example.SpringBootWeb.repositories.QuizRepository;
+import com.example.SpringBootWeb.services.interfaces.IQuizService;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor

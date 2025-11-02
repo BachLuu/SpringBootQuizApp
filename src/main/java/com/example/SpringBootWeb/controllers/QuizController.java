@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.SpringBootWeb.dtos.UpdateQuizDto;
-import com.example.SpringBootWeb.entities.Quiz;
+import com.example.SpringBootWeb.entities.models.Quiz;
 import com.example.SpringBootWeb.services.interfaces.IQuizService;
 
 import jakarta.validation.Valid;

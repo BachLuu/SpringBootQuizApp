@@ -1,4 +1,4 @@
-package com.example.SpringBootWeb.dtos;
+package com.example.SpringBootWeb.dtos.auths;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginResponseDto {
-    private String token;
+public class RegisterRequestDto {
+    private String email;
+    private String password;
+    private String fullName;
 }
 

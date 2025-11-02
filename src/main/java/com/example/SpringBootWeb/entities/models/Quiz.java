@@ -1,4 +1,4 @@
-package com.example.SpringBootWeb.entities;
+package com.example.SpringBootWeb.entities.models;
 
 import java.util.List;
 import java.util.UUID;
@@ -13,10 +13,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

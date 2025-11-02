@@ -1,16 +1,20 @@
 package com.example.SpringBootWeb.controllers;
 
-import com.example.SpringBootWeb.dtos.LoginRequestDto;
-import com.example.SpringBootWeb.dtos.LoginResponseDto;
-import com.example.SpringBootWeb.dtos.RegisterRequestDto;
+import com.example.SpringBootWeb.dtos.auths.LoginRequestDto;
+import com.example.SpringBootWeb.dtos.auths.LoginResponseDto;
+import com.example.SpringBootWeb.dtos.auths.RegisterRequestDto;
+import com.example.SpringBootWeb.dtos.users.UserResponseDto;
 import com.example.SpringBootWeb.services.interfaces.IAuthService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -20,23 +24,40 @@ public class AuthController {
     private final IAuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto request) {
-        LoginResponseDto token = authService.login(request);
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto request, HttpServletResponse response) {
+        LoginResponseDto token = authService.login(request, response);
         return ResponseEntity.ok(token);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody RegisterRequestDto request) {
+    public ResponseEntity<?> register(@RequestBody RegisterRequestDto request) {
         authService.register(request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(Map.of(
+                "message", "register success"));
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(HttpServletRequest request) {
-        // In a stateless JWT implementation, the client is responsible for deleting the token.
-        // The server can't really "log out" a user without maintaining state.
-        // A blacklist/revocation strategy could be implemented if needed.
+    public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
+        authService.logout(request, response);
         return ResponseEntity.ok().build();
     }
-}
 
+    @GetMapping("/me")
+    public ResponseEntity<UserResponseDto> getCurrentUser(HttpServletRequest request) {
+        String token = null;
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("access-token".equals(cookie.getName())) {
+                    token = cookie.getValue();
+                    break;
+                }
+            }
+        }
+        if (token == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } else {
+            UserResponseDto currentUser = authService.getCurrentUser(token);
+            return ResponseEntity.ok(currentUser);
+        }
+    }
+}

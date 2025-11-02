@@ -1,4 +1,4 @@
-package com.example.SpringBootWeb.entities;
+package com.example.SpringBootWeb.entities.models;
 
 import java.util.UUID;
 
@@ -12,43 +12,38 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@Table(name = "answers")
-@Getter
-@Setter
+@Table(name = "quiz_questions")
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Answer {
+public class QuizQuestion {
     @Id
     @UuidGenerator
     private UUID id;
 
     @NotNull
-    @Size(min = 5, max = 5000)
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String content;
+    @Column(name = "quiz_id", columnDefinition = "uniqueidentifier")
+    private UUID quizId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "quiz_id", insertable = false, updatable = false)
+    private Quiz quiz;
 
     @NotNull
-    @Column(nullable = false)
-    private Boolean isCorrect;
-
-    @Builder.Default
-    @Column(nullable = false)
-    private Boolean isActive = true;
-
-    @NotNull
-    @Column(name = "question_id", nullable = false, columnDefinition = "uniqueidentifier")
+    @Column(name = "question_id", columnDefinition = "uniqueidentifier")
     private UUID questionId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id", insertable = false, updatable = false)
     private Question question;
+
+    @Column(name = "`order`")
+    private Integer order;
 }

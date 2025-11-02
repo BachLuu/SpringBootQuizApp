@@ -1,4 +1,4 @@
-package com.example.SpringBootWeb.entities;
+package com.example.SpringBootWeb.entities.models;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

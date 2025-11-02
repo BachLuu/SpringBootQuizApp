@@ -1,4 +1,4 @@
-package com.example.SpringBootWeb.entities;
+package com.example.SpringBootWeb.entities.models;
 
 import java.util.UUID;
 
@@ -18,23 +18,23 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "quiz_questions")
+@Table(name = "user_answers")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class QuizQuestion {
+public class UserAnswer {
     @Id
     @UuidGenerator
     private UUID id;
 
     @NotNull
-    @Column(name = "quiz_id", columnDefinition = "uniqueidentifier")
-    private UUID quizId;
+    @Column(name = "user_quiz_id", columnDefinition = "uniqueidentifier")
+    private UUID userQuizId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "quiz_id", insertable = false, updatable = false)
-    private Quiz quiz;
+    @JoinColumn(name = "user_quiz_id", insertable = false, updatable = false)
+    private UserQuiz userQuiz;
 
     @NotNull
     @Column(name = "question_id", columnDefinition = "uniqueidentifier")
@@ -44,6 +44,14 @@ public class QuizQuestion {
     @JoinColumn(name = "question_id", insertable = false, updatable = false)
     private Question question;
 
-    @Column(name = "`order`")
-    private Integer order;
+    @NotNull
+    @Column(name = "answer_id", columnDefinition = "uniqueidentifier")
+    private UUID answerId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "answer_id", insertable = false, updatable = false)
+    private Answer answer;
+
+    @Column(nullable = false)
+    private Boolean isCorrect;
 }

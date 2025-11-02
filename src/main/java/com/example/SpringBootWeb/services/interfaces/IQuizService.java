@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.example.SpringBootWeb.dtos.UpdateQuizDto;
-import com.example.SpringBootWeb.entities.Quiz;
+import com.example.SpringBootWeb.entities.models.Quiz;
 
 public interface IQuizService {
 
