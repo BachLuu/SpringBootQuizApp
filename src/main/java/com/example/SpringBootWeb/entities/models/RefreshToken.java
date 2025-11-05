@@ -31,6 +31,6 @@ public class RefreshToken {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "expiry_date")
     private Instant expiryDate;
 }

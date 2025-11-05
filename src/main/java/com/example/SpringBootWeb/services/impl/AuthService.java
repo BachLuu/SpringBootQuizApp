@@ -118,8 +118,7 @@ public class AuthService implements IAuthService {
                 setTokenToHttpCookiesHeader("", null, response, Long.parseLong("0"), Long.parseLong("0"));
         }
 
-        // ------------------------ Private methods
-        // --------------------------------------------------------------------------------//
+        // ------------------------ Private methods -------------------------//
 
         private void setTokenToHttpCookiesHeader(final String accessToken, final RefreshToken refreshToken,
                         HttpServletResponse response, final long accessTokenExpiry, final long refreshTokenExpiry) {
@@ -128,7 +127,7 @@ public class AuthService implements IAuthService {
                                 .secure(true)
                                 .path("/")
                                 .maxAge(accessTokenExpiry)
-                                .sameSite("Strict")
+                                .sameSite("None")
                                 .build();
 
                 // Handle null RefreshToken
@@ -138,7 +137,7 @@ public class AuthService implements IAuthService {
                                 .secure(true)
                                 .path("/api/auth/refresh")
                                 .maxAge(refreshTokenExpiry)
-                                .sameSite("Strict")
+                                .sameSite("None")
                                 .build();
                 response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
                 response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
