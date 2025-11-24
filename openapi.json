@@ -1,0 +1,573 @@
+{
+  "openapi": "3.0.1",
+  "info": { "title": "OpenAPI definition", "version": "v0" },
+  "servers": [
+    { "url": "http://localhost:8080", "description": "Generated server url" }
+  ],
+  "paths": {
+    "/api/quizzes/{id}": {
+      "get": {
+        "tags": ["quiz-controller"],
+        "operationId": "getQuizById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/Quiz" } }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["quiz-controller"],
+        "operationId": "update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateQuizDto" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/Quiz" } }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["quiz-controller"],
+        "operationId": "deleteQuiz",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "100 CONTINUE",
+                    "101 SWITCHING_PROTOCOLS",
+                    "102 PROCESSING",
+                    "103 EARLY_HINTS",
+                    "103 CHECKPOINT",
+                    "200 OK",
+                    "201 CREATED",
+                    "202 ACCEPTED",
+                    "203 NON_AUTHORITATIVE_INFORMATION",
+                    "204 NO_CONTENT",
+                    "205 RESET_CONTENT",
+                    "206 PARTIAL_CONTENT",
+                    "207 MULTI_STATUS",
+                    "208 ALREADY_REPORTED",
+                    "226 IM_USED",
+                    "300 MULTIPLE_CHOICES",
+                    "301 MOVED_PERMANENTLY",
+                    "302 FOUND",
+                    "302 MOVED_TEMPORARILY",
+                    "303 SEE_OTHER",
+                    "304 NOT_MODIFIED",
+                    "305 USE_PROXY",
+                    "307 TEMPORARY_REDIRECT",
+                    "308 PERMANENT_REDIRECT",
+                    "400 BAD_REQUEST",
+                    "401 UNAUTHORIZED",
+                    "402 PAYMENT_REQUIRED",
+                    "403 FORBIDDEN",
+                    "404 NOT_FOUND",
+                    "405 METHOD_NOT_ALLOWED",
+                    "406 NOT_ACCEPTABLE",
+                    "407 PROXY_AUTHENTICATION_REQUIRED",
+                    "408 REQUEST_TIMEOUT",
+                    "409 CONFLICT",
+                    "410 GONE",
+                    "411 LENGTH_REQUIRED",
+                    "412 PRECONDITION_FAILED",
+                    "413 PAYLOAD_TOO_LARGE",
+                    "413 REQUEST_ENTITY_TOO_LARGE",
+                    "414 URI_TOO_LONG",
+                    "414 REQUEST_URI_TOO_LONG",
+                    "415 UNSUPPORTED_MEDIA_TYPE",
+                    "416 REQUESTED_RANGE_NOT_SATISFIABLE",
+                    "417 EXPECTATION_FAILED",
+                    "418 I_AM_A_TEAPOT",
+                    "419 INSUFFICIENT_SPACE_ON_RESOURCE",
+                    "420 METHOD_FAILURE",
+                    "421 DESTINATION_LOCKED",
+                    "422 UNPROCESSABLE_ENTITY",
+                    "423 LOCKED",
+                    "424 FAILED_DEPENDENCY",
+                    "425 TOO_EARLY",
+                    "426 UPGRADE_REQUIRED",
+                    "428 PRECONDITION_REQUIRED",
+                    "429 TOO_MANY_REQUESTS",
+                    "431 REQUEST_HEADER_FIELDS_TOO_LARGE",
+                    "451 UNAVAILABLE_FOR_LEGAL_REASONS",
+                    "500 INTERNAL_SERVER_ERROR",
+                    "501 NOT_IMPLEMENTED",
+                    "502 BAD_GATEWAY",
+                    "503 SERVICE_UNAVAILABLE",
+                    "504 GATEWAY_TIMEOUT",
+                    "505 HTTP_VERSION_NOT_SUPPORTED",
+                    "506 VARIANT_ALSO_NEGOTIATES",
+                    "507 INSUFFICIENT_STORAGE",
+                    "508 LOOP_DETECTED",
+                    "509 BANDWIDTH_LIMIT_EXCEEDED",
+                    "510 NOT_EXTENDED",
+                    "511 NETWORK_AUTHENTICATION_REQUIRED"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/quizzes": {
+      "get": {
+        "tags": ["quiz-controller"],
+        "operationId": "getAllQuizzes",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Quiz" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["quiz-controller"],
+        "operationId": "createQuiz",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Quiz" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "$ref": "#/components/schemas/Quiz" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "tags": ["auth-controller"],
+        "operationId": "register",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RegisterRequestDto" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "type": "object" } } }
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": ["auth-controller"],
+        "operationId": "logout",
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": ["auth-controller"],
+        "operationId": "login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LoginRequestDto" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/LoginResponseDto" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/quizzes/search": {
+      "get": {
+        "tags": ["quiz-controller"],
+        "operationId": "searchByTitle",
+        "parameters": [
+          {
+            "name": "title",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Quiz" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/quizzes/duration": {
+      "get": {
+        "tags": ["quiz-controller"],
+        "operationId": "getQuizzesByDurationRange",
+        "parameters": [
+          {
+            "name": "min",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "max",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Quiz" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/quizzes/count": {
+      "get": {
+        "tags": ["quiz-controller"],
+        "operationId": "getTotalQuizzes",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": { "schema": { "type": "integer", "format": "int64" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/quizzes/active": {
+      "get": {
+        "tags": ["quiz-controller"],
+        "operationId": "getActiveQuizzes",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Quiz" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "tags": ["auth-controller"],
+        "operationId": "getCurrentUser",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/UserResponseDto" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UpdateQuizDto": {
+        "required": ["description", "duration", "isActive", "title"],
+        "type": "object",
+        "properties": {
+          "title": { "maxLength": 255, "minLength": 5, "type": "string" },
+          "description": { "type": "string" },
+          "duration": {
+            "maximum": 3600,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "thumbnailUrl": {
+            "maxLength": 500,
+            "minLength": 0,
+            "type": "string"
+          },
+          "isActive": { "type": "boolean" }
+        }
+      },
+      "Answer": {
+        "required": ["content", "isCorrect", "questionId"],
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "content": { "maxLength": 5000, "minLength": 5, "type": "string" },
+          "isCorrect": { "type": "boolean" },
+          "isActive": { "type": "boolean" },
+          "questionId": { "type": "string", "format": "uuid" },
+          "question": { "$ref": "#/components/schemas/Question" }
+        }
+      },
+      "Question": {
+        "required": ["content", "questionType"],
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "content": { "maxLength": 5000, "minLength": 5, "type": "string" },
+          "questionType": {
+            "type": "string",
+            "enum": [
+              "MultipleChoice",
+              "SingleChoice",
+              "TrueFalse",
+              "FillInTheBlanks",
+              "ShortAnswer",
+              "LongAnswer"
+            ]
+          },
+          "isActive": { "type": "boolean" },
+          "quizQuestions": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/QuizQuestion" }
+          },
+          "answers": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Answer" }
+          }
+        }
+      },
+      "Quiz": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "duration": { "type": "integer", "format": "int32" },
+          "thumbnailUrl": { "type": "string" },
+          "isActive": { "type": "boolean" },
+          "userQuizzes": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/UserQuiz" }
+          },
+          "quizQuestions": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/QuizQuestion" }
+          }
+        }
+      },
+      "QuizQuestion": {
+        "required": ["questionId", "quizId"],
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "quizId": { "type": "string", "format": "uuid" },
+          "quiz": { "$ref": "#/components/schemas/Quiz" },
+          "questionId": { "type": "string", "format": "uuid" },
+          "question": { "$ref": "#/components/schemas/Question" },
+          "order": { "type": "integer", "format": "int32" }
+        }
+      },
+      "Role": {
+        "required": ["description", "name"],
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "name": { "maxLength": 50, "minLength": 3, "type": "string" },
+          "description": { "maxLength": 50, "minLength": 3, "type": "string" },
+          "isActive": { "type": "boolean" }
+        }
+      },
+      "User": {
+        "required": ["email", "firstName", "lastName", "password"],
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "firstName": { "maxLength": 50, "minLength": 3, "type": "string" },
+          "lastName": { "maxLength": 50, "minLength": 3, "type": "string" },
+          "email": { "type": "string" },
+          "password": { "type": "string" },
+          "avatar": { "maxLength": 500, "minLength": 0, "type": "string" },
+          "dateOfBirth": { "type": "string", "format": "date" },
+          "isActive": { "type": "boolean" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "userQuizzes": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/UserQuiz" }
+          },
+          "roles": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Role" }
+          },
+          "displayName": { "type": "string" }
+        }
+      },
+      "UserAnswer": {
+        "required": ["answerId", "questionId", "userQuizId"],
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "userQuizId": { "type": "string", "format": "uuid" },
+          "userQuiz": { "$ref": "#/components/schemas/UserQuiz" },
+          "questionId": { "type": "string", "format": "uuid" },
+          "question": { "$ref": "#/components/schemas/Question" },
+          "answerId": { "type": "string", "format": "uuid" },
+          "answer": { "$ref": "#/components/schemas/Answer" },
+          "isCorrect": { "type": "boolean" }
+        }
+      },
+      "UserQuiz": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "userId": { "type": "string", "format": "uuid" },
+          "user": { "$ref": "#/components/schemas/User" },
+          "quizId": { "type": "string", "format": "uuid" },
+          "quiz": { "$ref": "#/components/schemas/Quiz" },
+          "quizCode": { "type": "string" },
+          "startedAt": { "type": "string", "format": "date-time" },
+          "finishedAt": { "type": "string", "format": "date-time" },
+          "userAnswers": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/UserAnswer" }
+          }
+        }
+      },
+      "RegisterRequestDto": {
+        "type": "object",
+        "properties": {
+          "email": { "type": "string" },
+          "password": { "type": "string" },
+          "fullName": { "type": "string" }
+        }
+      },
+      "LoginRequestDto": {
+        "type": "object",
+        "properties": {
+          "email": { "type": "string" },
+          "password": { "type": "string" }
+        }
+      },
+      "LoginResponseDto": {
+        "required": ["accessToken", "refreshToken"],
+        "type": "object",
+        "properties": {
+          "accessToken": { "type": "string" },
+          "refreshToken": { "$ref": "#/components/schemas/RefreshToken" }
+        }
+      },
+      "RefreshToken": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "token": { "type": "string" },
+          "user": { "$ref": "#/components/schemas/User" },
+          "expiryDate": { "type": "string", "format": "date-time" }
+        }
+      },
+      "RoleDto": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "isActive": { "type": "boolean" }
+        }
+      },
+      "UserResponseDto": {
+        "required": ["email", "firstName", "lastName"],
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "firstName": { "maxLength": 50, "minLength": 3, "type": "string" },
+          "lastName": { "maxLength": 50, "minLength": 3, "type": "string" },
+          "email": { "type": "string" },
+          "avatar": { "maxLength": 500, "minLength": 0, "type": "string" },
+          "dateOfBirth": { "type": "string", "format": "date" },
+          "isActive": { "type": "boolean" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "roles": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/RoleDto" }
+          },
+          "displayName": { "type": "string" }
+        }
+      }
+    }
+  }
+}
