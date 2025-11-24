@@ -1,4 +1,4 @@
-package com.example.SpringBootWeb.dtos.auths;
+package com.example.SpringBootWeb.entities.dtos.auths;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

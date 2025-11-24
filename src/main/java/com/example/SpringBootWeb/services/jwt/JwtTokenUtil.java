@@ -10,7 +10,11 @@ import java.util.function.Function;
 
 import javax.crypto.SecretKey;
 
+import com.example.SpringBootWeb.entities.constants.ErrorMessage;
+import com.example.SpringBootWeb.entities.models.User;
+import com.example.SpringBootWeb.repositories.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.example.SpringBootWeb.entities.jwt.JwtProperties;
@@ -26,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JwtTokenUtil {
     private final JwtProperties props;
+    private final UserRepository userRepository;
 
     private SecretKey key;
 
@@ -85,8 +90,12 @@ public class JwtTokenUtil {
         Map<String, Object> claims = new HashMap<>();
         claims.put("type", "refresh");
         String token = createToken(claims, userDetails.getUsername());
+        User user = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException(ErrorMessage.USER_NOT_FOUND + userDetails.getUsername()));
+
         return RefreshToken.builder()
                 .token(token)
+                .user(user)
                 .expiryDate(Instant.now().plusMillis(props.refreshExpiration()))
                 .build();
     }

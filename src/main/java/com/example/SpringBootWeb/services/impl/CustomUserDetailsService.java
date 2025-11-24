@@ -1,5 +1,6 @@
 package com.example.SpringBootWeb.services.impl;
 
+import com.example.SpringBootWeb.entities.constants.ErrorMessage;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,7 +20,8 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
         @Override
         public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
                 var user = userRepository.findByEmail(email)
-                                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
+                                .orElseThrow(() -> new UsernameNotFoundException(
+                                                ErrorMessage.USER_NOT_FOUND + ": " + email));
 
                 return org.springframework.security.core.userdetails.User.builder()
                                 .username(user.getEmail())

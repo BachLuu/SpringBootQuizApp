@@ -1,4 +1,4 @@
-package com.example.SpringBootWeb.dtos.auths;
+package com.example.SpringBootWeb.entities.dtos.auths;
 
 import com.example.SpringBootWeb.entities.models.RefreshToken;
 

@@ -56,14 +56,11 @@ public class User {
     @Column(length = 500)
     private String avatar;
 
-    @Column(name = "date_of_birth")
+    @Column
     private LocalDate dateOfBirth;
 
-    @Column
-    private String newCoString;
-
     @Builder.Default
-    @Column(nullable = false)
+    @Column
     private Boolean isActive = true;
 
     @Column(name = "created_at")

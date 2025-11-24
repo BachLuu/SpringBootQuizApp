@@ -22,11 +22,13 @@ public class Role {
     @UuidGenerator
     private UUID id;
 
+    @Basic(fetch = FetchType.LAZY)
     @NotNull
     @Size(min = 3, max = 50)
     @Column(nullable = false, length = 50, unique = true)
     private String name;
 
+    @Basic(fetch = FetchType.LAZY)
     @NotNull
     @Size(min = 3, max = 50)
     @Column(nullable = false, length = 50)

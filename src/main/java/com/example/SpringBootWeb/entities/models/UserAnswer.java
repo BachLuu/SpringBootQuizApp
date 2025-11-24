@@ -2,15 +2,9 @@ package com.example.SpringBootWeb.entities.models;
 
 import java.util.UUID;
 
+import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,6 +38,7 @@ public class UserAnswer {
     @JoinColumn(name = "question_id", insertable = false, updatable = false)
     private Question question;
 
+    @Basic(fetch = FetchType.LAZY)
     @NotNull
     @Column(name = "answer_id", columnDefinition = "uniqueidentifier")
     private UUID answerId;

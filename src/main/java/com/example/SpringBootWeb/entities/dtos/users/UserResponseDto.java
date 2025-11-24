@@ -1,4 +1,4 @@
-package com.example.SpringBootWeb.dtos.users;
+package com.example.SpringBootWeb.entities.dtos.users;
 
 import java.io.Serializable;
 import java.time.LocalDate;

@@ -3,24 +3,26 @@ package com.example.SpringBootWeb.services.interfaces;
 import java.util.List;
 import java.util.UUID;
 
-import com.example.SpringBootWeb.dtos.UpdateQuizDto;
-import com.example.SpringBootWeb.entities.models.Quiz;
+import com.example.SpringBootWeb.entities.dtos.UpdateQuizDto;
+import com.example.SpringBootWeb.entities.dtos.quizzes.CreateQuizDto;
+import com.example.SpringBootWeb.entities.dtos.quizzes.QuizDetailDto;
+import com.example.SpringBootWeb.entities.dtos.quizzes.QuizResponseDto;
 
 public interface IQuizService {
 
-    List<Quiz> getAllQuizzes();
+    List<QuizResponseDto> getAllQuizzes();
 
-    Quiz getQuizById(UUID id);
+    QuizDetailDto getQuizById(UUID id);
 
-    List<Quiz> getActiveQuizzes();
+    List<QuizResponseDto> getActiveQuizzes();
 
-    List<Quiz> searchByTitle(String title);
+    List<QuizResponseDto> searchByTitle(String title);
 
-    List<Quiz> getQuizzesByDurationRange(int minDuration, int maxDuration);
+    List<QuizResponseDto> getQuizzesByDurationRange(int minDuration, int maxDuration);
 
-    Quiz createQuiz(Quiz quiz);
+    QuizResponseDto createQuiz(CreateQuizDto createQuizDto);
 
-    Quiz updateQuiz(UUID id, UpdateQuizDto updateQuizDto);
+    QuizResponseDto updateQuiz(UUID id, UpdateQuizDto updateQuizDto);
 
     void deleteQuiz(UUID id);
 
