@@ -3,7 +3,7 @@ package com.example.SpringBootWeb.services.interfaces;
 import java.util.List;
 import java.util.UUID;
 
-import com.example.SpringBootWeb.entities.dtos.UpdateQuizDto;
+import com.example.SpringBootWeb.entities.dtos.quizzes.UpdateQuizDto;
 import com.example.SpringBootWeb.entities.dtos.quizzes.CreateQuizDto;
 import com.example.SpringBootWeb.entities.dtos.quizzes.QuizDetailDto;
 import com.example.SpringBootWeb.entities.dtos.quizzes.QuizResponseDto;

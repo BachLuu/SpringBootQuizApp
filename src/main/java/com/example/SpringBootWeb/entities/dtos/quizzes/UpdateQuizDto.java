@@ -1,4 +1,4 @@
-package com.example.SpringBootWeb.entities.dtos;
+package com.example.SpringBootWeb.entities.dtos.quizzes;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

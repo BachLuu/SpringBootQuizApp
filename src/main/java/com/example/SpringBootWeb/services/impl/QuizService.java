@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.SpringBootWeb.entities.dtos.UpdateQuizDto;
+import com.example.SpringBootWeb.entities.dtos.quizzes.UpdateQuizDto;
 import com.example.SpringBootWeb.entities.models.Quiz;
 import com.example.SpringBootWeb.repositories.QuizRepository;
 import com.example.SpringBootWeb.services.interfaces.IQuizService;

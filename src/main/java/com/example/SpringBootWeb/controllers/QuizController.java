@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.SpringBootWeb.entities.dtos.UpdateQuizDto;
+import com.example.SpringBootWeb.entities.dtos.quizzes.UpdateQuizDto;
 import com.example.SpringBootWeb.services.interfaces.IQuizService;
 
 import jakarta.validation.Valid;

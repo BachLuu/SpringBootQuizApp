@@ -10,4 +10,7 @@ public class ErrorMessage {
     public static final String QUIZ_TITLE_EMPTY = "Quiz title cannot be empty";
     public static final String QUIZ_DURATION_INVALID = "Quiz duration must be between 1 and 3600 minutes";
     public static final String QUIZ_NOT_FOUND = "Quiz not found with id: ";
+    public static final String QUESTION_NOT_FOUND = "Question not found with id: ";
+    public static final String ANSWER_NOT_FOUND = "Answer not found with id: ";
+    public static final String SEARCH_CONTENT_EMPTY = "Search content cannot be empty";
 }
