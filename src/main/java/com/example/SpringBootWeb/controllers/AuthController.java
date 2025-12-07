@@ -37,8 +37,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequestDto request) {
         authService.register(request);
-        return ResponseEntity.ok().body(Map.of(
-                "message", SuccessMessage.REGISTER_SUCCESS));
+        return ResponseEntity.ok().body(Map.of("message", SuccessMessage.REGISTER_SUCCESS));
     }
 
     @PostMapping("/logout")

@@ -25,32 +25,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenUtil jwtService;
     private final UserDetailsService userDetailsService;
 
-//     Danh sách các patterns không cần authentication
-     private static final List<String> PUBLIC_ENDPOINTS = Arrays.asList(
-             "/api/auth/login",
-             "/api/auth/register",
-             "/api/auth/refresh-token",
-             "/swagger-ui",
-             "/v3/api-docs",
-             "/swagger-ui.html",
-             "/swagger-resources",
-             "/webjars");
+    // Danh sách các patterns không cần authentication
+    private static final List<String> PUBLIC_ENDPOINTS = Arrays.asList("/api/auth/login", "/api/auth/register",
+            "/api/auth/refresh-token", "/swagger-ui", "/v3/api-docs", "/swagger-ui.html", "/swagger-resources",
+            "/webjars");
 
-     @Override
-     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-         String path = request.getServletPath();
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getServletPath();
 
-         // Check if the request path matches any public endpoint
-         return PUBLIC_ENDPOINTS.stream()
-                 .anyMatch(path::startsWith);
-     }
+        // Check if the request path matches any public endpoint
+        return PUBLIC_ENDPOINTS.stream().anyMatch(path::startsWith);
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String jwt = null;
 
-        // Đọc token từ cookie thay vì header
+        // read token from cookies
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if ("access_token".equals(cookie.getName())) {
@@ -59,7 +52,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         }
-
+        // check if jwt is existed
         if (jwt == null) {
             filterChain.doFilter(request, response);
             return;
@@ -70,8 +63,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
             if (jwtService.isTokenValid(jwt, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails,
+                        null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authToken);

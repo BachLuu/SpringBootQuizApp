@@ -129,7 +129,6 @@ public class QuizService implements IQuizService {
     @Transactional
     public QuizResponseDto updateQuiz(UUID id, UpdateQuizDto updateDto) {
         logger.info("Updating quiz with id: {}", id);
-
         Quiz existingQuiz = quizRepository.findById(id)
                 .orElseThrow(() -> {
                     logger.error("Quiz not found with id: {}", id);

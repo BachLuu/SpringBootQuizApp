@@ -45,8 +45,8 @@ public class AuthService implements IAuthService {
 
     @Override
     public LoginResponseDto login(LoginRequestDto request, HttpServletResponse response) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
         final UserDetails userDetails = customUserDetailsService.loadUserByUsername(request.getEmail());
         final String accessToken = jwtTokenUtil.generateToken(userDetails);
@@ -55,22 +55,14 @@ public class AuthService implements IAuthService {
 
         setTokenToHttpCookiesHeader(accessToken, refreshToken, response, jwtProperties.expiration(),
                 jwtProperties.refreshExpiration());
-        return LoginResponseDto.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+        return LoginResponseDto.builder().accessToken(accessToken).refreshToken(refreshToken).build();
     }
 
     @Override
     public void register(RegisterRequestDto request) {
-        User user = User
-                .builder()
-                .email(request.getEmail())
-                .dateOfBirth(request.getDateOfBirth())
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .build();
+        User user = User.builder().email(request.getEmail()).dateOfBirth(request.getDateOfBirth())
+                .firstName(request.getFirstName()).lastName(request.getLastName())
+                .password(passwordEncoder.encode(request.getPassword())).build();
         userRepository.save(user);
     }
 
@@ -82,25 +74,14 @@ public class AuthService implements IAuthService {
                 .orElseThrow(() -> new RuntimeException(ErrorMessage.USER_NOT_FOUND));
 
         // Map sang UserDto
-        Set<UserResponseDto.RoleDto> roleDtos = user.getRoles().stream()
-                .map(role -> UserResponseDto.RoleDto.builder()
-                        .name(role.getName())
-                        .isActive(role.getIsActive())
-                        .build())
+        Set<UserResponseDto.RoleDto> roleDtos = user.getRoles().stream().map(
+                role -> UserResponseDto.RoleDto.builder().name(role.getName()).isActive(role.getIsActive()).build())
                 .collect(Collectors.toSet());
 
-        return UserResponseDto.builder()
-                .id(user.getId())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .email(user.getEmail())
-                .avatar(user.getAvatar())
-                .dateOfBirth(user.getDateOfBirth())
-                .isActive(user.getIsActive())
-                .createdAt(user.getCreatedAt())
-                .roles(roleDtos)
-                .displayName(user.getFirstName() + " " + user.getLastName())
-                .build();
+        return UserResponseDto.builder().id(user.getId()).firstName(user.getFirstName()).lastName(user.getLastName())
+                .email(user.getEmail()).avatar(user.getAvatar()).dateOfBirth(user.getDateOfBirth())
+                .isActive(user.getIsActive()).createdAt(user.getCreatedAt()).roles(roleDtos)
+                .displayName(user.getFirstName() + " " + user.getLastName()).build();
     }
 
     @Override
@@ -118,8 +99,7 @@ public class AuthService implements IAuthService {
 
         // Delete refresh token from database
         if (refreshToken != null) {
-            refreshTokenRepository.findByToken(refreshToken)
-                    .ifPresent(refreshTokenRepository::delete);
+            refreshTokenRepository.findByToken(refreshToken).ifPresent(refreshTokenRepository::delete);
         }
         setTokenToHttpCookiesHeader("", null, response, Long.parseLong("0"), Long.parseLong("0"));
     }
@@ -136,8 +116,8 @@ public class AuthService implements IAuthService {
             final String newAccessToken = jwtTokenUtil.generateToken(userDetails);
 
             // Set new tokens in cookies
-            setTokenToHttpCookiesHeader(newAccessToken, existingRefreshToken, response,
-                    jwtProperties.expiration(), jwtProperties.refreshExpiration());
+            setTokenToHttpCookiesHeader(newAccessToken, existingRefreshToken, response, jwtProperties.expiration(),
+                    jwtProperties.refreshExpiration());
 
             return Pair.of(true, newAccessToken);
         }
@@ -147,24 +127,14 @@ public class AuthService implements IAuthService {
     // ------------------------ Private methods -------------------------//
 
     private void setTokenToHttpCookiesHeader(final String accessToken, final RefreshToken refreshToken,
-                                             HttpServletResponse response, final long accessTokenExpiry, final long refreshTokenExpiry) {
-        ResponseCookie accessCookie = ResponseCookie.from("access_token", accessToken)
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .maxAge(accessTokenExpiry)
-                .sameSite("None")
-                .build();
+            HttpServletResponse response, final long accessTokenExpiry, final long refreshTokenExpiry) {
+        ResponseCookie accessCookie = ResponseCookie.from("access_token", accessToken).httpOnly(true).secure(true)
+                .path("/").maxAge(accessTokenExpiry).sameSite("None").build();
 
         // Handle null RefreshToken
         String refreshTokenValue = (refreshToken != null) ? refreshToken.getToken() : "";
-        ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", refreshTokenValue)
-                .httpOnly(true)
-                .secure(true)
-                .path("/api/auth/refresh")
-                .maxAge(refreshTokenExpiry)
-                .sameSite("None")
-                .build();
+        ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", refreshTokenValue).httpOnly(true)
+                .secure(true).path("/api/auth/refresh").maxAge(refreshTokenExpiry).sameSite("None").build();
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
     }
