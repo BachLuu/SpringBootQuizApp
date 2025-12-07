@@ -3,9 +3,6 @@ package com.example.SpringBootWeb.services.impl;
 import java.time.Instant;
 import java.util.stream.Collectors;
 
-import com.example.SpringBootWeb.entities.constants.ErrorMessage;
-import com.example.SpringBootWeb.entities.constants.SuccessMessage;
-import com.example.SpringBootWeb.services.jwt.JwtTokenUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.util.Pair;
@@ -13,15 +10,18 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.example.SpringBootWeb.entities.constants.ErrorMessage;
+import com.example.SpringBootWeb.entities.constants.SuccessMessage;
 import com.example.SpringBootWeb.entities.models.RefreshToken;
 import com.example.SpringBootWeb.entities.models.User;
 import com.example.SpringBootWeb.repositories.RefreshTokenRepository;
 import com.example.SpringBootWeb.repositories.UserRepository;
 import com.example.SpringBootWeb.services.interfaces.IRefreshTokenService;
+import com.example.SpringBootWeb.services.jwt.JwtTokenUtil;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
