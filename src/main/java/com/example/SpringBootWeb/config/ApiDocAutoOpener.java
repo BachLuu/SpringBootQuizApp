@@ -21,7 +21,7 @@ public class ApiDocAutoOpener implements ApplicationListener<ApplicationReadyEve
             if (!Desktop.isDesktopSupported()) return;
             String path = swaggerPath.startsWith("/") ? swaggerPath : ("/" + swaggerPath);
             Desktop.getDesktop().browse(new URI("http://localhost:" + port + path));
-        } catch (Exception ignored) {
+        } catch (Exception _) {
         }
     }
 }
