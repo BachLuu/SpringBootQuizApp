@@ -27,11 +27,11 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
                                 .username(user.getEmail())
                                 .password(user.getPassword())
                                 .disabled(!user.getIsActive())
-                                .authorities(
-                                                user.getRoles().stream()
-                                                                .map(role -> new SimpleGrantedAuthority(
-                                                                                "ROLE_" + role.getName()))
-                                                                .toList())
+                                .authorities(user.getRoles()
+                                                .stream()
+                                                .map(role -> new SimpleGrantedAuthority(
+                                                                "ROLE_" + role.getName().toUpperCase()))
+                                                .toList())
                                 .build();
         }
 }
