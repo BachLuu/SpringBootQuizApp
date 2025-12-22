@@ -10,6 +10,7 @@ import com.example.SpringBootWeb.entities.dtos.quizzes.QuizDetailDto;
 import com.example.SpringBootWeb.entities.dtos.quizzes.QuizResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -60,6 +61,24 @@ public class QuizController {
         }
 
         logger.info("Successfully retrieved {} quizzes", quizzes.size());
+        return ResponseEntity.ok(quizzes);
+    }
+
+    /**
+     * Get paged quizzes
+     *
+     * @return ResponseEntity containing list of paged quizzes
+     */
+    @GetMapping("/paged")
+    public ResponseEntity<Page<QuizResponseDto>> getPagedQuizzes(
+            @RequestParam(name = "page", defaultValue = "0") Integer page,
+            @RequestParam(name = "size", defaultValue = "10") Integer size) {
+        logger.info("GET /api/quizzes/paged - Fetching quizzes with pagination, page: {}, size: {}", page, size);
+
+        Page<QuizResponseDto> quizzes = quizService.getPagedQuizzes(page, size);
+        logger.info("Paged result: {} elements (page {} of {})",
+                quizzes.getNumberOfElements(), quizzes.getNumber(), quizzes.getTotalPages());
+
         return ResponseEntity.ok(quizzes);
     }
 
@@ -166,7 +185,7 @@ public class QuizController {
     /**
      * Update an existing quiz
      *
-     * @param id Quiz UUID
+     * @param id        Quiz UUID
      * @param updateDto Quiz update data
      * @return ResponseEntity containing updated quiz
      */

@@ -3,6 +3,8 @@ package com.example.SpringBootWeb.services.interfaces;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+
 import com.example.SpringBootWeb.entities.dtos.quizzes.UpdateQuizDto;
 import com.example.SpringBootWeb.entities.dtos.quizzes.CreateQuizDto;
 import com.example.SpringBootWeb.entities.dtos.quizzes.QuizDetailDto;
@@ -27,4 +29,6 @@ public interface IQuizService {
     void deleteQuiz(UUID id);
 
     long getTotalQuizzes();
+
+    Page<QuizResponseDto> getPagedQuizzes(Integer page, Integer size);
 }

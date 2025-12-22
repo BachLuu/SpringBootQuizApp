@@ -2,22 +2,24 @@ package com.example.SpringBootWeb.services.jwt;
 
 import java.text.ParseException;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 
-import com.example.SpringBootWeb.entities.constants.ErrorMessage;
-import com.example.SpringBootWeb.entities.models.User;
-import com.example.SpringBootWeb.repositories.UserRepository;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.example.SpringBootWeb.entities.constants.ErrorMessage;
 import com.example.SpringBootWeb.entities.jwt.JwtProperties;
 import com.example.SpringBootWeb.entities.models.RefreshToken;
-
+import com.example.SpringBootWeb.entities.models.User;
+import com.example.SpringBootWeb.repositories.UserRepository;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
@@ -29,6 +31,9 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,6 +46,9 @@ public class JwtTokenUtil {
 
     private JWSSigner signer;
     private JWSVerifier verifier;
+
+    public static final String REFRESH_TOKEN = "refresh_token";
+    public static final String ACCESS_TOKEN = "access_token";
 
     @PostConstruct
     public void init() {
@@ -77,7 +85,9 @@ public class JwtTokenUtil {
             Date expiration = new Date(now.getTime() + props.expiration());
 
             JWTClaimsSet.Builder claimsBuilder = new JWTClaimsSet.Builder().subject(subject)
-                    .jwtID(UUID.randomUUID().toString()).issueTime(now).expirationTime(expiration);
+                    .jwtID(UUID.randomUUID().toString())
+                    .issueTime(now)
+                    .expirationTime(expiration);
 
             for (Map.Entry<String, Object> entry : claims.entrySet()) {
                 claimsBuilder.claim(entry.getKey(), entry.getValue());
@@ -120,10 +130,66 @@ public class JwtTokenUtil {
         Map<String, Object> claims = new HashMap<>();
         claims.put("type", "refresh");
         String token = createToken(claims, userDetails.getUsername());
-        User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(
-                () -> new UsernameNotFoundException(ErrorMessage.USER_NOT_FOUND + userDetails.getUsername()));
+        User user = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(
+                        () -> new UsernameNotFoundException(ErrorMessage.USER_NOT_FOUND + userDetails.getUsername()));
 
-        return RefreshToken.builder().token(token).user(user)
-                .expiryDate(Instant.now().plusMillis(props.refreshExpiration())).build();
+        return RefreshToken.builder()
+                .token(token)
+                .user(user)
+                .expiryDate(Instant.now().plusMillis(props.refreshExpiration()))
+                .build();
+    }
+
+    public String getRefreshTokenFromCookie(HttpServletRequest request) {
+        if (request.getCookies() != null) {
+            return Arrays.stream(request.getCookies())
+                    .filter(cookie -> REFRESH_TOKEN.equals(cookie.getName()))
+                    .map(Cookie::getValue)
+                    .findFirst()
+                    .orElse(null);
+        }
+        return null;
+    }
+
+    public String getAccessTokenFromCookie(HttpServletRequest request) {
+        if (request.getCookies() != null) {
+            return Arrays.stream(request.getCookies())
+                    .filter(cookie -> ACCESS_TOKEN.equals(cookie.getName()))
+                    .map(Cookie::getValue)
+                    .findFirst()
+                    .orElse(null);
+        }
+        return null;
+    }
+
+    public void setTokenToHttpCookiesHeader(final String accessToken, final RefreshToken refreshToken,
+            HttpServletResponse response, final long accessTokenExpiry, final long refreshTokenExpiry) {
+        // SỬA: Thêm partitioned(true) cho Access Token Cookie
+        ResponseCookie accessCookie = ResponseCookie.from(ACCESS_TOKEN, accessToken)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(accessTokenExpiry)
+                .sameSite("None")
+                .partitioned(true)
+                .build();
+
+        // Handle null RefreshToken
+        String refreshTokenValue = (refreshToken != null) ? refreshToken.getToken() : "";
+
+        // SỬA: Thêm partitioned(true) cho Refresh Token Cookie
+        ResponseCookie refreshCookie = ResponseCookie.from(REFRESH_TOKEN, refreshTokenValue)
+                .httpOnly(true)
+                .secure(true)
+                .path("/api/auth/refresh")
+                .path("/api/auth/logout")
+                .maxAge(refreshTokenExpiry)
+                .sameSite("None")
+                .partitioned(true) // support
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
     }
 }

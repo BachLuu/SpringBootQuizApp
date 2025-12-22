@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -49,6 +50,15 @@ public class RoleController {
         }
 
         logger.info("Successfully retrieved {} roles", roles.size());
+        return ResponseEntity.ok(roles);
+    }
+
+    @GetMapping("/paged")
+    public ResponseEntity<Page<RoleResponseDto>> getPagedRoles(
+            @RequestParam(name = "page", defaultValue = "0") Integer page,
+            @RequestParam(name = "size", defaultValue = "10") Integer size) {
+        logger.info("GET /api/roles/paged - Fetching roles with pagination, page: {}, size: {}", page, size);
+        Page<RoleResponseDto> roles = roleService.getPagedRoles(page, size);
         return ResponseEntity.ok(roles);
     }
 

@@ -1,0 +1,61 @@
+spring:
+  application:
+    name: SpringBootWeb
+
+  config:
+    import: optional:classpath:application-local.yaml
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/QuizSpringDB?currentSchema=dbo
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  output:
+    ansi:
+      enabled: ALWAYS
+
+  liquibase:
+    enabled: false
+
+  web:
+    cors:
+      allowed-origin-patterns:
+        - http://localhost:5173
+        - vscode-webview://*
+      allowed-methods: [GET, POST, PUT, DELETE, OPTIONS]
+      allowed-headers: ["*"]
+      allow-credentials: true
+      max-age: 3600
+
+server:
+  port: 8080
+  http2:
+    enabled: true
+
+springdoc:
+  api-docs:
+    enabled: true
+    swagger-ui:
+      enabled: true
+      path: /swagger-ui.html
+
+jwt:
+  secret: ${JWT_SECRET:CHANGE_ME__THIS_IS_DEV_ONLY__USE_ENV_VAR_IN_PROD__MIN_32_CHARS}
+  expiration: 36000000 # 10 hours (ms)
+  refresh-expiration: 604800000 # 7 days (ms)
+
+logging:
+  level:
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG

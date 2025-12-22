@@ -11,7 +11,7 @@ import com.example.SpringBootWeb.entities.jwt.JwtProperties;
 @SpringBootApplication
 @ComponentScan(basePackages = "com.example.SpringBootWeb")
 @EnableJpaRepositories(basePackages = "com.example.SpringBootWeb.repositories")
-@EnableConfigurationProperties(JwtProperties.class) // ← Thêm dòng này
+@EnableConfigurationProperties(JwtProperties.class)
 public class SpringBootWebApplication {
 
     public static void main(String[] args) {

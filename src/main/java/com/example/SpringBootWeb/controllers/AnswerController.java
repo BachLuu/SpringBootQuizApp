@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,15 @@ public class AnswerController {
         if (answers.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
+        return ResponseEntity.ok(answers);
+    }
+
+    @GetMapping("/paged")
+    public ResponseEntity<Page<AnswerResponseDto>> getPagedAnswers(
+            @RequestParam(name = "page", defaultValue = "0") Integer page,
+            @RequestParam(name = "size", defaultValue = "10") Integer size) {
+        logger.info("GET /api/answers/paged - Fetching answers with pagination, page: {}, size: {}", page, size);
+        Page<AnswerResponseDto> answers = answerService.getPagedAnswers(page, size);
         return ResponseEntity.ok(answers);
     }
 

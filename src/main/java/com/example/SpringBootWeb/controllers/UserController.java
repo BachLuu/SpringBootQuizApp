@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,15 @@ public class UserController {
         if (users.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
+        return ResponseEntity.ok(users);
+    }
+
+    @GetMapping("/paged")
+    public ResponseEntity<Page<UserResponseDto>> getPagedUsers(
+            @RequestParam(name = "page", defaultValue = "0") Integer page,
+            @RequestParam(name = "size", defaultValue = "10") Integer size) {
+        logger.info("GET /api/users/paged - Fetching users with pagination, page: {}, size: {}", page, size);
+        Page<UserResponseDto> users = userService.getPagedUsers(page, size);
         return ResponseEntity.ok(users);
     }
 

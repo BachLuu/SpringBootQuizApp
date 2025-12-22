@@ -14,6 +14,8 @@ import com.example.SpringBootWeb.services.interfaces.IAnswerService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +39,23 @@ public class AnswerService implements IAnswerService {
         return answers.stream()
                 .map(this::mapToResponseDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<AnswerResponseDto> getPagedAnswers(Integer page, Integer size) {
+        int pageNumber = page == null ? 0 : page;
+        int pageSize = size == null ? 10 : size;
+
+        if (pageNumber < 0) {
+            throw new BadRequestException("Page must be >= 0");
+        }
+        if (pageSize < 1 || pageSize > 100) {
+            throw new BadRequestException("Size must be between 1 and 100");
+        }
+
+        Page<Answer> answerPage = answerRepository.findAll(PageRequest.of(pageNumber, pageSize));
+        return answerPage.map(this::mapToResponseDto);
     }
 
     @Override

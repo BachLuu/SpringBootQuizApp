@@ -33,5 +33,24 @@ build/
 .vscode/
 
 ### Config ###
-application.yaml
+src/main/resources/application-local.yaml
+src/main/resources/application-local.yml
+.env
+.env.*
 liquibase.properties
+logs/my-service-error.log
+logs/my-service.log
+logs/spring-boot-app.2025-12-08.log
+logs/spring-boot-app.2025-12-09.log
+logs/spring-boot-app.2025-12-10.log
+logs/spring-boot-app.2025-12-17.log
+logs/spring-boot-app.2025-12-18.log
+logs/spring-boot-app.2025-12-19.log
+logs/spring-boot-app.2025-12-20.log
+logs/spring-boot-app.2025-12-21.log
+logs/spring-boot-app.log
+.github/copilot-instructions.md
+.gitignore
+data/liquibase/QuizSpringSqlServer.liquibase.properties
+data/liquibase/settings.json
+SpringBootWeb.code-workspace

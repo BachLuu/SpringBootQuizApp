@@ -13,6 +13,8 @@ import com.example.SpringBootWeb.services.interfaces.IQuestionService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +37,23 @@ public class QuestionService implements IQuestionService {
         return questions.stream()
                 .map(this::mapToResponseDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<QuestionResponseDto> getPagedQuestions(Integer page, Integer size) {
+        int pageNumber = page == null ? 0 : page;
+        int pageSize = size == null ? 10 : size;
+
+        if (pageNumber < 0) {
+            throw new BadRequestException("Page must be >= 0");
+        }
+        if (pageSize < 1 || pageSize > 100) {
+            throw new BadRequestException("Size must be between 1 and 100");
+        }
+
+        Page<Question> questionPage = questionRepository.findAll(PageRequest.of(pageNumber, pageSize));
+        return questionPage.map(this::mapToResponseDto);
     }
 
     @Override

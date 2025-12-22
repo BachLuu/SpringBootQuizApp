@@ -4,11 +4,15 @@ import com.example.SpringBootWeb.entities.dtos.users.CreateUserDto;
 import com.example.SpringBootWeb.entities.dtos.users.UpdateUserDto;
 import com.example.SpringBootWeb.entities.dtos.users.UserResponseDto;
 
+import org.springframework.data.domain.Page;
+
 import java.util.List;
 import java.util.UUID;
 
 public interface IUserService {
     List<UserResponseDto> getAllUsers();
+
+    Page<UserResponseDto> getPagedUsers(Integer page, Integer size);
 
     UserResponseDto getUserById(UUID id);
 

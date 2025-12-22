@@ -12,6 +12,8 @@ import com.example.SpringBootWeb.exceptions.BadRequestException;
 import com.example.SpringBootWeb.exceptions.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class QuizService implements IQuizService {
 
+    private static final String QUIZ_NOT_FOUND_WITH_ID = "Quiz not found with id: {}";
     private static final Logger logger = LoggerFactory.getLogger(QuizService.class);
     private final QuizRepository quizRepository;
 
@@ -44,12 +47,33 @@ public class QuizService implements IQuizService {
 
     @Override
     @Transactional(readOnly = true)
+    public Page<QuizResponseDto> getPagedQuizzes(Integer page, Integer size) {
+        int pageNumber = page == null ? 0 : page;
+        int pageSize = size == null ? 10 : size;
+
+        logger.info("Fetching paged quizzes - page: {}, size: {}", pageNumber, pageSize);
+
+        if (pageNumber < 0) {
+            throw new BadRequestException("Page must be >= 0");
+        }
+        if (pageSize < 1 || pageSize > 100) {
+            throw new BadRequestException("Size must be between 1 and 100");
+        }
+
+        Page<Quiz> quizPage = quizRepository.findAll(PageRequest.of(pageNumber, pageSize));
+        logger.debug("Found {} quizzes in page {}", quizPage.getNumberOfElements(), pageNumber);
+
+        return quizPage.map(this::mapToResponseDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public QuizDetailDto getQuizById(UUID id) {
         logger.info("Fetching quiz with id: {}", id);
 
         Quiz quiz = quizRepository.findById(id)
                 .orElseThrow(() -> {
-                    logger.error("Quiz not found with id: {}", id);
+                    logger.error(QUIZ_NOT_FOUND_WITH_ID, id);
                     return new ResourceNotFoundException(ErrorMessage.QUIZ_NOT_FOUND + id);
                 });
 
@@ -131,7 +155,7 @@ public class QuizService implements IQuizService {
         logger.info("Updating quiz with id: {}", id);
         Quiz existingQuiz = quizRepository.findById(id)
                 .orElseThrow(() -> {
-                    logger.error("Quiz not found with id: {}", id);
+                    logger.error(QUIZ_NOT_FOUND_WITH_ID, id);
                     return new ResourceNotFoundException(ErrorMessage.QUIZ_NOT_FOUND + id);
                 });
 
@@ -153,7 +177,7 @@ public class QuizService implements IQuizService {
         logger.info("Deleting quiz with id: {}", id);
 
         if (!quizRepository.existsById(id)) {
-            logger.error("Quiz not found with id: {}", id);
+            logger.error(QUIZ_NOT_FOUND_WITH_ID, id);
             throw new ResourceNotFoundException(ErrorMessage.QUIZ_NOT_FOUND + id);
         }
 
@@ -180,8 +204,7 @@ public class QuizService implements IQuizService {
                 quiz.getDescription(),
                 quiz.getDuration(),
                 quiz.getThumbnailUrl(),
-                quiz.getIsActive()
-        );
+                quiz.getIsActive());
     }
 
     private QuizDetailDto mapToDetailDto(Quiz quiz) {

@@ -5,11 +5,15 @@ import com.example.SpringBootWeb.entities.dtos.questions.QuestionResponseDto;
 import com.example.SpringBootWeb.entities.dtos.questions.UpdateQuestionDto;
 import com.example.SpringBootWeb.entities.enums.QuestionType;
 
+import org.springframework.data.domain.Page;
+
 import java.util.List;
 import java.util.UUID;
 
 public interface IQuestionService {
     List<QuestionResponseDto> getAllQuestions();
+
+    Page<QuestionResponseDto> getPagedQuestions(Integer page, Integer size);
 
     QuestionResponseDto getQuestionById(UUID id);
 
