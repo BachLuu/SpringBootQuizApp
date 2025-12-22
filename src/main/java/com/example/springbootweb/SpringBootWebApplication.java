@@ -2,16 +2,18 @@ package com.example.springbootweb;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
+import com.example.springbootweb.entities.jwt.JwtProperties;
+
 @SpringBootApplication
-@ComponentScan(basePackages = "com.example.springbootweb")
 @EnableJpaRepositories(basePackages = "com.example.springbootweb.repositories")
+@EnableConfigurationProperties(JwtProperties.class)
 public class SpringBootWebApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SpringBootWebApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(SpringBootWebApplication.class, args);
+    }
 
 }
