@@ -2,9 +2,17 @@ package com.example.springbootweb.entities.models;
 
 import java.util.UUID;
 
-import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
+import org.jspecify.annotations.NonNull;
 
+import jakarta.persistence.Basic;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -25,20 +33,24 @@ public class Answer {
     @UuidGenerator
     private UUID id;
 
+    @NonNull
     @NotNull
     @Size(min = 5, max = 5000)
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    @NonNull
     @NotNull
     @Column(nullable = false)
     private Boolean isCorrect;
 
+    @NonNull
     @Builder.Default
     @Column(nullable = false)
     private Boolean isActive = true;
 
     @Basic(fetch = FetchType.LAZY)
+    @NonNull
     @NotNull
     @Column(name = "question_id", nullable = false, columnDefinition = "uniqueidentifier")
     private UUID questionId;

@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
+import org.jspecify.annotations.NonNull;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -19,12 +21,18 @@ import lombok.Data;
 @Builder
 public class UserResponseDto implements Serializable {
     private UUID id;
+
+    @NonNull
     @NotNull
     @Size(min = 3, max = 50)
     private String firstName;
+
+    @NonNull
     @NotNull
     @Size(min = 3, max = 50)
     private String lastName;
+
+    @NonNull
     @NotNull
     @Email
     private String email;

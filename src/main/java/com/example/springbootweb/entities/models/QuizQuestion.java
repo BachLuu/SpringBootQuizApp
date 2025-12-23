@@ -2,9 +2,17 @@ package com.example.springbootweb.entities.models;
 
 import java.util.UUID;
 
-import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
+import org.jspecify.annotations.NonNull;
 
+import jakarta.persistence.Basic;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,6 +30,7 @@ public class QuizQuestion {
     @UuidGenerator
     private UUID id;
 
+    @NonNull
     @NotNull
     @Column(name = "quiz_id", columnDefinition = "uniqueidentifier")
     private UUID quizId;
@@ -31,6 +40,7 @@ public class QuizQuestion {
     private Quiz quiz;
 
     @Basic(fetch = FetchType.LAZY)
+    @NonNull
     @NotNull
     @Column(name = "question_id", columnDefinition = "uniqueidentifier")
     private UUID questionId;

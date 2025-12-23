@@ -1,6 +1,9 @@
 package com.example.springbootweb.entities.dtos.questions;
 
+import org.jspecify.annotations.NonNull;
+
 import com.example.springbootweb.entities.enums.QuestionType;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -18,6 +21,7 @@ public class CreateQuestionDto {
     @Size(min = 5, max = 5000, message = "Content must be between 5 and 5000 characters")
     private String content;
 
+    @NonNull
     @NotNull(message = "Question type is required")
     private QuestionType questionType;
 }

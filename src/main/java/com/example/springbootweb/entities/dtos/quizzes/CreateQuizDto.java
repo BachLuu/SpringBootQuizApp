@@ -1,5 +1,7 @@
 package com.example.springbootweb.entities.dtos.quizzes;
 
+import org.jspecify.annotations.NonNull;
+
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -22,6 +24,7 @@ public class CreateQuizDto {
     @Size(max = 1000, message = "Description must not exceed 1000 characters")
     private String description;
 
+    @NonNull
     @NotNull(message = "Duration is required")
     @Min(value = 1, message = "Duration must be at least 1 minute")
     @Max(value = 3600, message = "Duration must not exceed 3600 minutes")

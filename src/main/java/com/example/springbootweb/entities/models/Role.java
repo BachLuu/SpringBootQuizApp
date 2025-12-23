@@ -1,15 +1,22 @@
 package com.example.springbootweb.entities.models;
 
-import jakarta.persistence.*;
+import java.util.UUID;
+
+import org.hibernate.annotations.UuidGenerator;
+import org.jspecify.annotations.NonNull;
+
+import jakarta.persistence.Basic;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.UuidGenerator;
-
-import java.util.UUID;
 
 @Entity
 @Table(name = "roles")
@@ -23,12 +30,14 @@ public class Role {
     private UUID id;
 
     @Basic(fetch = FetchType.LAZY)
+    @NonNull
     @NotNull
     @Size(min = 3, max = 50)
     @Column(nullable = false, length = 50, unique = true)
     private String name;
 
     @Basic(fetch = FetchType.LAZY)
+    @NonNull
     @NotNull
     @Size(min = 3, max = 50)
     @Column(nullable = false, length = 50)
