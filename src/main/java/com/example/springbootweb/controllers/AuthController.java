@@ -18,7 +18,7 @@ import com.example.springbootweb.entities.constants.SuccessMessage;
 import com.example.springbootweb.entities.dtos.auths.LoginRequestDto;
 import com.example.springbootweb.entities.dtos.auths.LoginResponseDto;
 import com.example.springbootweb.entities.dtos.auths.RegisterRequestDto;
-import com.example.springbootweb.entities.dtos.users.UserResponseDto;
+import com.example.springbootweb.entities.dtos.users.UserDetailResponse;
 import com.example.springbootweb.services.interfaces.IAuthService;
 
 import jakarta.servlet.http.Cookie;
@@ -35,7 +35,8 @@ public class AuthController {
     private final IAuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto request, HttpServletResponse response) {
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto request,
+            HttpServletResponse response) {
         LoginResponseDto token = authService.login(request, response);
         return ResponseEntity.ok(token);
     }
@@ -53,8 +54,8 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<UserResponseDto> getCurrentUser(HttpServletRequest request) {
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<UserDetailResponse> getCurrentUser(HttpServletRequest request) {
         String token = null;
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
@@ -67,13 +68,14 @@ public class AuthController {
         if (token == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         } else {
-            UserResponseDto currentUser = authService.getCurrentUser(token);
+            UserDetailResponse currentUser = authService.getCurrentUser(token);
             return ResponseEntity.ok(currentUser);
         }
     }
 
     @GetMapping("/refresh-token")
-    public ResponseEntity<Boolean> refreshToken(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<Boolean> refreshToken(HttpServletRequest request,
+            HttpServletResponse response) {
         Pair<Boolean, String> refreshTokenResult = authService.refreshToken(request, response);
         if (refreshTokenResult.getFirst().booleanValue()) {
             return ResponseEntity.ok(true);

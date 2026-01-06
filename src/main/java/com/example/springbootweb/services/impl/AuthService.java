@@ -1,8 +1,5 @@
 package com.example.springbootweb.services.impl;
 
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.springframework.data.util.Pair;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,11 +11,12 @@ import com.example.springbootweb.entities.constants.ErrorMessage;
 import com.example.springbootweb.entities.dtos.auths.LoginRequestDto;
 import com.example.springbootweb.entities.dtos.auths.LoginResponseDto;
 import com.example.springbootweb.entities.dtos.auths.RegisterRequestDto;
-import com.example.springbootweb.entities.dtos.users.UserResponseDto;
+import com.example.springbootweb.entities.dtos.users.UserDetailResponse;
 import com.example.springbootweb.entities.jwt.JwtProperties;
 import com.example.springbootweb.entities.models.RefreshToken;
 import com.example.springbootweb.entities.models.User;
 import com.example.springbootweb.exceptions.ResourceNotFoundException;
+import com.example.springbootweb.mappers.UserMapper;
 import com.example.springbootweb.repositories.RefreshTokenRepository;
 import com.example.springbootweb.repositories.UserRepository;
 import com.example.springbootweb.services.interfaces.IAuthService;
@@ -42,6 +40,7 @@ public class AuthService implements IAuthService {
   private final IRefreshTokenService refreshTokenService;
   private final RefreshTokenRepository refreshTokenRepository;
   private final JwtProperties jwtProperties;
+  private final UserMapper userMapper;
 
   @Override
   public LoginResponseDto login(LoginRequestDto request, HttpServletResponse response) {
@@ -71,29 +70,12 @@ public class AuthService implements IAuthService {
   }
 
   @Override
-  public UserResponseDto getCurrentUser(String accessToken) {
+  public UserDetailResponse getCurrentUser(String accessToken) {
     String email = jwtTokenUtil.extractUserSubject(accessToken);
     // Tìm user trong database
     User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException(ErrorMessage.USER_NOT_FOUND));
 
-    // Map sang UserDto
-    Set<UserResponseDto.RoleDto> roleDtos = user.getRoles()
-        .stream()
-        .map(role -> UserResponseDto.RoleDto.builder().name(role.getName()).isActive(role.getIsActive()).build())
-        .collect(Collectors.toSet());
-
-    return UserResponseDto.builder()
-        .id(user.getId())
-        .firstName(user.getFirstName())
-        .lastName(user.getLastName())
-        .email(user.getEmail())
-        .avatar(user.getAvatar())
-        .dateOfBirth(user.getDateOfBirth())
-        .isActive(user.getIsActive())
-        .createdAt(user.getCreatedAt())
-        .roles(roleDtos)
-        .displayName(user.getFirstName() + " " + user.getLastName())
-        .build();
+    return userMapper.toResponse(user);
   }
 
   @Override

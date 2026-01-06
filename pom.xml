@@ -19,12 +19,15 @@
     <!-- ============================================= -->
     <groupId>com.example</groupId>
     <artifactId>SpringBootWeb</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>
+    0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Spring Boot Quiz Application</name>
-    <description>Enterprise Quiz Management System with Spring Boot</description>
-    <url>https://github.com/BachLuu/SpringBootQuizApp</url>
+    <description>Enterprise
+    Quiz Management System with Spring Boot</description>
+    <url>
+    https://github.com/BachLuu/SpringBootQuizApp</url>
 
     <licenses>
         <license>
@@ -64,10 +67,13 @@
         <springdoc-openapi.version>3.0.0</springdoc-openapi.version>
         <springdoc-openapi.version>3.0.0</springdoc-openapi.version>
         <commons-text.version>1.13.1</commons-text.version>
+        <org.mapstruct.version>1.6.3</org.mapstruct.version>
 
         <!-- Plugin Versions -->
-        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
-        <rewrite-maven-plugin.version>6.25.0</rewrite-maven-plugin.version>
+        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
+        <rewrite-maven-plugin.version>6.26.0</rewrite-maven-plugin.version>
+        <rewrite-java.version>3.23.0</rewrite-java.version>
+        <rewrite-spring.version>6.20.0</rewrite-spring.version>
     </properties>
 
     <!-- ============================================= -->
@@ -138,18 +144,16 @@
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-websocket</artifactId>
         </dependency>
-
         <!-- ========== Utilities ========== -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
-
         <dependency>
-            <groupId>org.fusesource.jansi</groupId>
-            <artifactId>jansi</artifactId>
-            <version>2.4.0</version>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>${org.mapstruct.version}</version>
         </dependency>
 
         <dependency>
@@ -157,6 +161,13 @@
             <artifactId>jansi</artifactId>
             <version>2.4.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.fusesource.jansi</groupId>
+            <artifactId>jansi</artifactId>
+            <version>2.4.0</version>
+        </dependency>
+
 
         <!-- ========== Testing ========== -->
         <dependency>
@@ -214,12 +225,18 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
                             <version>${lombok.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${org.mapstruct.version}</version>
                         </path>
                     </annotationProcessorPaths>
                     <release>${java.version}</release>
@@ -259,14 +276,14 @@
                     <dependency>
                         <groupId>org.openrewrite.recipe</groupId>
                         <artifactId>rewrite-migrate-java</artifactId>
-                        <version>3.23.0</version>
+                        <version>${rewrite-java.version}</version>
                     </dependency>
 
                     <!-- Spring Framework & Boot Migration Recipes -->
                     <dependency>
                         <groupId>org.openrewrite.recipe</groupId>
                         <artifactId>rewrite-spring</artifactId>
-                        <version>6.20.0</version>
+                        <version>${rewrite-spring.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>

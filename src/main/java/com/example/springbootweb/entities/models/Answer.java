@@ -1,10 +1,5 @@
 package com.example.springbootweb.entities.models;
 
-import java.util.UUID;
-
-import org.hibernate.annotations.UuidGenerator;
-import org.jspecify.annotations.NonNull;
-
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,11 +10,14 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.UuidGenerator;
+import org.jspecify.annotations.NonNull;
 
 @Entity
 @Table(name = "answers")
@@ -29,33 +27,38 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class Answer {
-    @Id
-    @UuidGenerator
-    private UUID id;
 
-    @NonNull
-    @NotNull
-    @Size(min = 5, max = 5000)
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String content;
+  @Id
+  @UuidGenerator
+  private UUID id;
 
-    @NonNull
-    @NotNull
-    @Column(nullable = false)
-    private Boolean isCorrect;
+  @NonNull
+  @NotNull
+  @Size(min = 5, max = 5000)
+  @Column(nullable = false, columnDefinition = "TEXT")
+  private String content;
 
-    @NonNull
-    @Builder.Default
-    @Column(nullable = false)
-    private Boolean isActive = true;
+  @NonNull
+  @NotNull
+  @Column(nullable = false)
+  private Boolean isCorrect;
 
-    @Basic(fetch = FetchType.LAZY)
-    @NonNull
-    @NotNull
-    @Column(name = "question_id", nullable = false, columnDefinition = "uniqueidentifier")
-    private UUID questionId;
+  @NonNull
+  @Builder.Default
+  @Column(nullable = false)
+  private Boolean isActive = true;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "question_id", insertable = false, updatable = false)
-    private Question question;
+  @Basic(fetch = FetchType.LAZY)
+  @NonNull
+  @NotNull
+  @Column(
+    name = "question_id",
+    nullable = false,
+    columnDefinition = "uniqueidentifier"
+  )
+  private UUID questionId;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "question_id", insertable = false, updatable = false)
+  private Question question;
 }

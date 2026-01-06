@@ -1,8 +1,9 @@
 package com.example.springbootweb.services.interfaces;
 
-import com.example.springbootweb.entities.dtos.questions.CreateQuestionDto;
-import com.example.springbootweb.entities.dtos.questions.QuestionResponseDto;
-import com.example.springbootweb.entities.dtos.questions.UpdateQuestionDto;
+import com.example.springbootweb.entities.dtos.questions.CreateQuestionRequest;
+import com.example.springbootweb.entities.dtos.questions.QuestionDetailResponse;
+import com.example.springbootweb.entities.dtos.questions.QuestionSummaryResponse;
+import com.example.springbootweb.entities.dtos.questions.UpdateQuestionRequest;
 import com.example.springbootweb.entities.enums.QuestionType;
 
 import org.springframework.data.domain.Page;
@@ -11,21 +12,21 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IQuestionService {
-    List<QuestionResponseDto> getAllQuestions();
+    List<QuestionSummaryResponse> getAllQuestions();
 
-    Page<QuestionResponseDto> getPagedQuestions(Integer page, Integer size);
+    Page<QuestionSummaryResponse> getPagedQuestions(Integer page, Integer size);
 
-    QuestionResponseDto getQuestionById(UUID id);
+    QuestionDetailResponse getQuestionById(UUID id);
 
-    List<QuestionResponseDto> getActiveQuestions();
+    List<QuestionSummaryResponse> getActiveQuestions();
 
-    List<QuestionResponseDto> searchByContent(String content);
+    List<QuestionSummaryResponse> searchByContent(String content);
 
-    List<QuestionResponseDto> getQuestionsByType(QuestionType questionType);
+    List<QuestionSummaryResponse> getQuestionsByType(QuestionType questionType);
 
-    QuestionResponseDto createQuestion(CreateQuestionDto createQuestionDto);
+    QuestionDetailResponse createQuestion(CreateQuestionRequest createQuestionRequest);
 
-    QuestionResponseDto updateQuestion(UUID id, UpdateQuestionDto updateQuestionDto);
+    QuestionDetailResponse updateQuestion(UUID id, UpdateQuestionRequest updateQuestionRequest);
 
     void deleteQuestion(UUID id);
 

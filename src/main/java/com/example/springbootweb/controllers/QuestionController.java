@@ -1,8 +1,9 @@
 package com.example.springbootweb.controllers;
 
-import com.example.springbootweb.entities.dtos.questions.CreateQuestionDto;
-import com.example.springbootweb.entities.dtos.questions.QuestionResponseDto;
-import com.example.springbootweb.entities.dtos.questions.UpdateQuestionDto;
+import com.example.springbootweb.entities.dtos.questions.CreateQuestionRequest;
+import com.example.springbootweb.entities.dtos.questions.QuestionDetailResponse;
+import com.example.springbootweb.entities.dtos.questions.QuestionSummaryResponse;
+import com.example.springbootweb.entities.dtos.questions.UpdateQuestionRequest;
 import com.example.springbootweb.entities.enums.QuestionType;
 import com.example.springbootweb.services.interfaces.IQuestionService;
 import jakarta.validation.Valid;
@@ -28,9 +29,9 @@ public class QuestionController {
     private final IQuestionService questionService;
 
     @GetMapping
-    public ResponseEntity<List<QuestionResponseDto>> getAllQuestions() {
+    public ResponseEntity<List<QuestionSummaryResponse>> getAllQuestions() {
         logger.info("GET /api/questions - Fetching all questions");
-        List<QuestionResponseDto> questions = questionService.getAllQuestions();
+        List<QuestionSummaryResponse> questions = questionService.getAllQuestions();
         if (questions.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -38,25 +39,27 @@ public class QuestionController {
     }
 
     @GetMapping("/paged")
-    public ResponseEntity<Page<QuestionResponseDto>> getPagedQuestions(
+    public ResponseEntity<Page<QuestionSummaryResponse>> getPagedQuestions(
             @RequestParam(name = "page", defaultValue = "0") Integer page,
             @RequestParam(name = "size", defaultValue = "10") Integer size) {
-        logger.info("GET /api/questions/paged - Fetching questions with pagination, page: {}, size: {}", page, size);
-        Page<QuestionResponseDto> questions = questionService.getPagedQuestions(page, size);
+        logger.info(
+                "GET /api/questions/paged - Fetching questions with pagination, page: {}, size: {}",
+                page, size);
+        Page<QuestionSummaryResponse> questions = questionService.getPagedQuestions(page, size);
         return ResponseEntity.ok(questions);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<QuestionResponseDto> getQuestionById(@PathVariable("id") UUID id) {
+    public ResponseEntity<QuestionDetailResponse> getQuestionById(@PathVariable("id") UUID id) {
         logger.info("GET /api/questions/{} - Fetching question details", id);
-        QuestionResponseDto question = questionService.getQuestionById(id);
+        QuestionDetailResponse question = questionService.getQuestionById(id);
         return ResponseEntity.ok(question);
     }
 
     @GetMapping("/active")
-    public ResponseEntity<List<QuestionResponseDto>> getActiveQuestions() {
+    public ResponseEntity<List<QuestionSummaryResponse>> getActiveQuestions() {
         logger.info("GET /api/questions/active - Fetching active questions");
-        List<QuestionResponseDto> questions = questionService.getActiveQuestions();
+        List<QuestionSummaryResponse> questions = questionService.getActiveQuestions();
         if (questions.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -64,9 +67,10 @@ public class QuestionController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<QuestionResponseDto>> searchByContent(@RequestParam("content") String content) {
+    public ResponseEntity<List<QuestionSummaryResponse>> searchByContent(
+            @RequestParam("content") String content) {
         logger.info("GET /api/questions/search - Searching questions with content: {}", content);
-        List<QuestionResponseDto> questions = questionService.searchByContent(content);
+        List<QuestionSummaryResponse> questions = questionService.searchByContent(content);
         if (questions.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -74,9 +78,10 @@ public class QuestionController {
     }
 
     @GetMapping("/type/{type}")
-    public ResponseEntity<List<QuestionResponseDto>> getQuestionsByType(@PathVariable("type") QuestionType type) {
+    public ResponseEntity<List<QuestionSummaryResponse>> getQuestionsByType(
+            @PathVariable("type") QuestionType type) {
         logger.info("GET /api/questions/type/{} - Fetching questions by type", type);
-        List<QuestionResponseDto> questions = questionService.getQuestionsByType(type);
+        List<QuestionSummaryResponse> questions = questionService.getQuestionsByType(type);
         if (questions.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -84,17 +89,19 @@ public class QuestionController {
     }
 
     @PostMapping
-    public ResponseEntity<QuestionResponseDto> createQuestion(@Valid @RequestBody CreateQuestionDto createQuestionDto) {
+    public ResponseEntity<QuestionDetailResponse> createQuestion(
+            @Valid @RequestBody CreateQuestionRequest createQuestionRequest) {
         logger.info("POST /api/questions - Creating new question");
-        QuestionResponseDto createdQuestion = questionService.createQuestion(createQuestionDto);
+        QuestionDetailResponse createdQuestion = questionService.createQuestion(createQuestionRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdQuestion);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<QuestionResponseDto> updateQuestion(@PathVariable("id") UUID id,
-            @Valid @RequestBody UpdateQuestionDto updateQuestionDto) {
+    public ResponseEntity<QuestionDetailResponse> updateQuestion(@PathVariable("id") UUID id,
+            @Valid @RequestBody UpdateQuestionRequest updateQuestionRequest) {
         logger.info("PUT /api/questions/{} - Updating question", id);
-        QuestionResponseDto updatedQuestion = questionService.updateQuestion(id, updateQuestionDto);
+        QuestionDetailResponse updatedQuestion =
+                questionService.updateQuestion(id, updateQuestionRequest);
         return ResponseEntity.ok(updatedQuestion);
     }
 

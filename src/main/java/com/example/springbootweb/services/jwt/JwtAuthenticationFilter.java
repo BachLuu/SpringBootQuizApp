@@ -25,7 +25,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenUtil jwtService;
     private final UserDetailsService userDetailsService;
 
-    // Danh sách các patterns không cần authentication
+    // List of public endpoints that do not require authentication
     private static final List<String> PUBLIC_ENDPOINTS = Arrays.asList("/api/auth/login", "/api/auth/register",
             "/api/auth/refresh-token", "/swagger-ui", "/v3/api-docs", "/swagger-ui.html", "/swagger-resources",
             "/webjars");

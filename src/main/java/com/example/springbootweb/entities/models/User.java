@@ -1,15 +1,5 @@
 package com.example.springbootweb.entities.models;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
-import org.hibernate.annotations.UuidGenerator;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,10 +12,18 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Size;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.UuidGenerator;
 
 @Entity
 @Table(name = "users")
@@ -34,50 +32,53 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class User {
-    @Id
-    @UuidGenerator
-    private UUID id;
 
-    @Size(min = 3, max = 50)
-    @Column(nullable = false, length = 50)
-    private String firstName;
+	@Id
+	@UuidGenerator
+	private UUID id;
 
-    @Size(min = 3, max = 50)
-    @Column(nullable = false, length = 50)
-    private String lastName;
+	@Size(min = 3, max = 50)
+	@Column(nullable = false, length = 50)
+	private String firstName;
 
-    @Column(nullable = false, unique = true)
-    private String email;
+	@Size(min = 3, max = 50)
+	@Column(nullable = false, length = 50)
+	private String lastName;
 
-    @Column(nullable = false)
-    private String password;
+	@Column(nullable = false, unique = true)
+	private String email;
 
-    @Size(max = 500)
-    @Column(length = 500)
-    private String avatar;
+	@Column(nullable = false)
+	private String password;
 
-    @Column
-    private LocalDate dateOfBirth;
+	@Size(max = 500)
+	@Column(length = 500)
+	private String avatar;
 
-    @Builder.Default
-    @Column
-    private Boolean isActive = true;
+	@Column
+	private LocalDate dateOfBirth;
 
-    @Column(name = "created_at")
-    @Builder.Default
-    private LocalDateTime createdAt = LocalDateTime.now();
+	@Builder.Default
+	@Column
+	private Boolean isActive = true;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @Builder.Default
-    private List<UserQuiz> userQuizzes = new ArrayList<>();
+	@Column(name = "created_at")
+	@Builder.Default
+	private LocalDateTime createdAt = LocalDateTime.now();
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    @Builder.Default
-    private Set<Role> roles = new HashSet<>();
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@Builder.Default
+	private List<UserQuiz> userQuizzes = new ArrayList<>();
 
-    @Transient
-    public String getDisplayName() {
-        return firstName + " " + lastName;
-    }
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"),
+			inverseJoinColumns = @JoinColumn(name = "role_id"))
+	@Builder.Default
+	private Set<Role> roles = new HashSet<>();
+
+	@Transient
+	public String getDisplayName() {
+		return firstName + " " + lastName;
+	}
+
 }

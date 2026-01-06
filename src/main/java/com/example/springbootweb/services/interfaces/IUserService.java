@@ -1,8 +1,9 @@
 package com.example.springbootweb.services.interfaces;
 
-import com.example.springbootweb.entities.dtos.users.CreateUserDto;
-import com.example.springbootweb.entities.dtos.users.UpdateUserDto;
-import com.example.springbootweb.entities.dtos.users.UserResponseDto;
+import com.example.springbootweb.entities.dtos.users.CreateUserRequest;
+import com.example.springbootweb.entities.dtos.users.UpdateUserRequest;
+import com.example.springbootweb.entities.dtos.users.UserDetailResponse;
+import com.example.springbootweb.entities.dtos.users.UserSummaryResponse;
 
 import org.springframework.data.domain.Page;
 
@@ -10,19 +11,19 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IUserService {
-    List<UserResponseDto> getAllUsers();
+    List<UserSummaryResponse> getAllUsers();
 
-    Page<UserResponseDto> getPagedUsers(Integer page, Integer size);
+    Page<UserSummaryResponse> getPagedUsers(Integer page, Integer size);
 
-    UserResponseDto getUserById(UUID id);
+    UserDetailResponse getUserById(UUID id);
 
-    List<UserResponseDto> getActiveUsers();
+    List<UserSummaryResponse> getActiveUsers();
 
-    List<UserResponseDto> searchUsers(String keyword);
+    List<UserSummaryResponse> searchUsers(String keyword);
 
-    UserResponseDto createUser(CreateUserDto createUserDto);
+    UserDetailResponse createUser(CreateUserRequest createUserRequest);
 
-    UserResponseDto updateUser(UUID id, UpdateUserDto updateUserDto);
+    UserDetailResponse updateUser(UUID id, UpdateUserRequest updateUserRequest);
 
     void deleteUser(UUID id);
 

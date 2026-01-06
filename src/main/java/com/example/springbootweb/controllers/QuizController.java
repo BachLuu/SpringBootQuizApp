@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import com.example.springbootweb.entities.dtos.quizzes.CreateQuizDto;
-import com.example.springbootweb.entities.dtos.quizzes.QuizDetailDto;
-import com.example.springbootweb.entities.dtos.quizzes.QuizResponseDto;
+import com.example.springbootweb.entities.dtos.quizzes.CreateQuizRequest;
+import com.example.springbootweb.entities.dtos.quizzes.QuizDetailResponse;
+import com.example.springbootweb.entities.dtos.quizzes.QuizSummaryResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.springbootweb.entities.dtos.quizzes.UpdateQuizDto;
+import com.example.springbootweb.entities.dtos.quizzes.UpdateQuizRequest;
 import com.example.springbootweb.services.interfaces.IQuizService;
 
 import jakarta.validation.Valid;
@@ -50,10 +50,10 @@ public class QuizController {
      * @return ResponseEntity containing list of all quizzes
      */
     @GetMapping
-    public ResponseEntity<List<QuizResponseDto>> getAllQuizzes() {
+    public ResponseEntity<List<QuizSummaryResponse>> getAllQuizzes() {
         logger.info("GET /api/quizzes - Fetching all quizzes");
 
-        List<QuizResponseDto> quizzes = quizService.getAllQuizzes();
+        List<QuizSummaryResponse> quizzes = quizService.getAllQuizzes();
 
         if (quizzes.isEmpty()) {
             logger.info("No quizzes found");
@@ -70,12 +70,12 @@ public class QuizController {
      * @return ResponseEntity containing list of paged quizzes
      */
     @GetMapping("/paged")
-    public ResponseEntity<Page<QuizResponseDto>> getPagedQuizzes(
+    public ResponseEntity<Page<QuizSummaryResponse>> getPagedQuizzes(
             @RequestParam(name = "page", defaultValue = "0") Integer page,
             @RequestParam(name = "size", defaultValue = "10") Integer size) {
         logger.info("GET /api/quizzes/paged - Fetching quizzes with pagination, page: {}, size: {}", page, size);
 
-        Page<QuizResponseDto> quizzes = quizService.getPagedQuizzes(page, size);
+        Page<QuizSummaryResponse> quizzes = quizService.getPagedQuizzes(page, size);
         logger.info("Paged result: {} elements (page {} of {})",
                 quizzes.getNumberOfElements(), quizzes.getNumber(), quizzes.getTotalPages());
 
@@ -89,12 +89,12 @@ public class QuizController {
      * @return ResponseEntity containing quiz details
      */
     @GetMapping("/{id}")
-    public ResponseEntity<QuizDetailDto> getQuizById(@PathVariable("id") UUID id) {
+    public ResponseEntity<QuizDetailResponse> getQuizById(@PathVariable("id") UUID id) {
         logger.info("GET /api/quizzes/{} - Fetching quiz details", id);
 
-        QuizDetailDto quiz = quizService.getQuizById(id);
+        QuizDetailResponse quiz = quizService.getQuizById(id);
 
-        logger.info("Successfully retrieved quiz: {}", quiz.getTitle());
+        logger.info("Successfully retrieved quiz: {}", quiz.title());
         return ResponseEntity.ok(quiz);
     }
 
@@ -104,10 +104,10 @@ public class QuizController {
      * @return ResponseEntity containing list of active quizzes
      */
     @GetMapping("/active")
-    public ResponseEntity<List<QuizResponseDto>> getActiveQuizzes() {
+    public ResponseEntity<List<QuizSummaryResponse>> getActiveQuizzes() {
         logger.info("GET /api/quizzes/active - Fetching active quizzes");
 
-        List<QuizResponseDto> quizzes = quizService.getActiveQuizzes();
+        List<QuizSummaryResponse> quizzes = quizService.getActiveQuizzes();
 
         if (quizzes.isEmpty()) {
             logger.info("No active quizzes found");
@@ -125,11 +125,11 @@ public class QuizController {
      * @return ResponseEntity containing list of matching quizzes
      */
     @GetMapping("/search")
-    public ResponseEntity<List<QuizResponseDto>> searchByTitle(
+    public ResponseEntity<List<QuizSummaryResponse>> searchByTitle(
             @RequestParam("title") String title) {
         logger.info("GET /api/quizzes/search - Searching quizzes with title: {}", title);
 
-        List<QuizResponseDto> quizzes = quizService.searchByTitle(title);
+        List<QuizSummaryResponse> quizzes = quizService.searchByTitle(title);
 
         if (quizzes.isEmpty()) {
             logger.info("No quizzes found matching title: {}", title);
@@ -148,13 +148,13 @@ public class QuizController {
      * @return ResponseEntity containing list of quizzes within duration range
      */
     @GetMapping("/duration")
-    public ResponseEntity<List<QuizResponseDto>> getQuizzesByDurationRange(
+    public ResponseEntity<List<QuizSummaryResponse>> getQuizzesByDurationRange(
             @RequestParam("min") int minDuration,
             @RequestParam("max") int maxDuration) {
         logger.info("GET /api/quizzes/duration - Fetching quizzes with duration range: {}-{}",
                 minDuration, maxDuration);
 
-        List<QuizResponseDto> quizzes = quizService.getQuizzesByDurationRange(minDuration, maxDuration);
+        List<QuizSummaryResponse> quizzes = quizService.getQuizzesByDurationRange(minDuration, maxDuration);
 
         if (quizzes.isEmpty()) {
             logger.info("No quizzes found in duration range: {}-{}", minDuration, maxDuration);
@@ -168,17 +168,17 @@ public class QuizController {
     /**
      * Create a new quiz
      *
-     * @param createQuizDto Quiz creation data
+     * @param createQuizRequest Quiz creation data
      * @return ResponseEntity containing created quiz
      */
     @PostMapping
-    public ResponseEntity<QuizResponseDto> createQuiz(
-            @Valid @RequestBody CreateQuizDto createQuizDto) {
-        logger.info("POST /api/quizzes - Creating new quiz: {}", createQuizDto.getTitle());
+    public ResponseEntity<QuizDetailResponse> createQuiz(
+            @Valid @RequestBody CreateQuizRequest createQuizRequest) {
+        logger.info("POST /api/quizzes - Creating new quiz: {}", createQuizRequest.title());
 
-        QuizResponseDto createdQuiz = quizService.createQuiz(createQuizDto);
+        QuizDetailResponse createdQuiz = quizService.createQuiz(createQuizRequest);
 
-        logger.info("Successfully created quiz with id: {}", createdQuiz.getId());
+        logger.info("Successfully created quiz with id: {}", createdQuiz.id());
         return ResponseEntity.status(HttpStatus.CREATED).body(createdQuiz);
     }
 
@@ -190,14 +190,14 @@ public class QuizController {
      * @return ResponseEntity containing updated quiz
      */
     @PutMapping("/{id}")
-    public ResponseEntity<QuizResponseDto> updateQuiz(
+    public ResponseEntity<QuizDetailResponse> updateQuiz(
             @PathVariable("id") UUID id,
-            @Valid @RequestBody UpdateQuizDto updateDto) {
+            @Valid @RequestBody UpdateQuizRequest updateDto) {
         logger.info("PUT /api/quizzes/{} - Updating quiz", id);
 
-        QuizResponseDto updatedQuiz = quizService.updateQuiz(id, updateDto);
+        QuizDetailResponse updatedQuiz = quizService.updateQuiz(id, updateDto);
 
-        logger.info("Successfully updated quiz with id: {}", updatedQuiz.getId());
+        logger.info("Successfully updated quiz with id: {}", updatedQuiz.id());
         return ResponseEntity.ok(updatedQuiz);
     }
 
