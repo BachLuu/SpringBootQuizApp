@@ -3,7 +3,7 @@ package com.example.springbootweb.services.interfaces;
 import com.example.springbootweb.entities.dtos.auths.LoginRequestDto;
 import com.example.springbootweb.entities.dtos.auths.LoginResponseDto;
 import com.example.springbootweb.entities.dtos.auths.RegisterRequestDto;
-import com.example.springbootweb.entities.dtos.users.UserResponseDto;
+import com.example.springbootweb.entities.dtos.users.UserDetailResponse;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,7 +14,7 @@ public interface IAuthService {
 
     void register(RegisterRequestDto request);
 
-    UserResponseDto getCurrentUser(String accessToken);
+    UserDetailResponse getCurrentUser(String accessToken);
 
     void logout(HttpServletRequest request, HttpServletResponse response);
 

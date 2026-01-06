@@ -1,8 +1,9 @@
 package com.example.springbootweb.controllers;
 
-import com.example.springbootweb.entities.dtos.answers.AnswerResponseDto;
-import com.example.springbootweb.entities.dtos.answers.CreateAnswerDto;
-import com.example.springbootweb.entities.dtos.answers.UpdateAnswerDto;
+import com.example.springbootweb.entities.dtos.answers.AnswerResponse;
+import com.example.springbootweb.entities.dtos.answers.AnswerSummaryResponse;
+import com.example.springbootweb.entities.dtos.answers.CreateAnswerRequest;
+import com.example.springbootweb.entities.dtos.answers.UpdateAnswerRequest;
 import com.example.springbootweb.services.interfaces.IAnswerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,9 +28,9 @@ public class AnswerController {
     private final IAnswerService answerService;
 
     @GetMapping
-    public ResponseEntity<List<AnswerResponseDto>> getAllAnswers() {
+    public ResponseEntity<List<AnswerSummaryResponse>> getAllAnswers() {
         logger.info("GET /api/answers - Fetching all answers");
-        List<AnswerResponseDto> answers = answerService.getAllAnswers();
+        List<AnswerSummaryResponse> answers = answerService.getAllAnswers();
         if (answers.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -37,25 +38,25 @@ public class AnswerController {
     }
 
     @GetMapping("/paged")
-    public ResponseEntity<Page<AnswerResponseDto>> getPagedAnswers(
+    public ResponseEntity<Page<AnswerSummaryResponse>> getPagedAnswers(
             @RequestParam(name = "page", defaultValue = "0") Integer page,
             @RequestParam(name = "size", defaultValue = "10") Integer size) {
         logger.info("GET /api/answers/paged - Fetching answers with pagination, page: {}, size: {}", page, size);
-        Page<AnswerResponseDto> answers = answerService.getPagedAnswers(page, size);
+        Page<AnswerSummaryResponse> answers = answerService.getPagedAnswers(page, size);
         return ResponseEntity.ok(answers);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AnswerResponseDto> getAnswerById(@PathVariable("id") UUID id) {
+    public ResponseEntity<AnswerResponse> getAnswerById(@PathVariable("id") UUID id) {
         logger.info("GET /api/answers/{} - Fetching answer details", id);
-        AnswerResponseDto answer = answerService.getAnswerById(id);
+        AnswerResponse answer = answerService.getAnswerById(id);
         return ResponseEntity.ok(answer);
     }
 
     @GetMapping("/active")
-    public ResponseEntity<List<AnswerResponseDto>> getActiveAnswers() {
+    public ResponseEntity<List<AnswerSummaryResponse>> getActiveAnswers() {
         logger.info("GET /api/answers/active - Fetching active answers");
-        List<AnswerResponseDto> answers = answerService.getActiveAnswers();
+        List<AnswerSummaryResponse> answers = answerService.getActiveAnswers();
         if (answers.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -63,9 +64,9 @@ public class AnswerController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<AnswerResponseDto>> searchByContent(@RequestParam("content") String content) {
+    public ResponseEntity<List<AnswerSummaryResponse>> searchByContent(@RequestParam("content") String content) {
         logger.info("GET /api/answers/search - Searching answers with content: {}", content);
-        List<AnswerResponseDto> answers = answerService.searchByContent(content);
+        List<AnswerSummaryResponse> answers = answerService.searchByContent(content);
         if (answers.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -73,9 +74,10 @@ public class AnswerController {
     }
 
     @GetMapping("/question/{questionId}")
-    public ResponseEntity<List<AnswerResponseDto>> getAnswersByQuestionId(@PathVariable("questionId") UUID questionId) {
+    public ResponseEntity<List<AnswerSummaryResponse>> getAnswersByQuestionId(
+            @PathVariable("questionId") UUID questionId) {
         logger.info("GET /api/answers/question/{} - Fetching answers for question", questionId);
-        List<AnswerResponseDto> answers = answerService.getAnswersByQuestionId(questionId);
+        List<AnswerSummaryResponse> answers = answerService.getAnswersByQuestionId(questionId);
         if (answers.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -83,17 +85,17 @@ public class AnswerController {
     }
 
     @PostMapping
-    public ResponseEntity<AnswerResponseDto> createAnswer(@Valid @RequestBody CreateAnswerDto createAnswerDto) {
+    public ResponseEntity<AnswerResponse> createAnswer(@Valid @RequestBody CreateAnswerRequest createAnswerRequest) {
         logger.info("POST /api/answers - Creating new answer");
-        AnswerResponseDto createdAnswer = answerService.createAnswer(createAnswerDto);
+        AnswerResponse createdAnswer = answerService.createAnswer(createAnswerRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdAnswer);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AnswerResponseDto> updateAnswer(@PathVariable("id") UUID id,
-            @Valid @RequestBody UpdateAnswerDto updateAnswerDto) {
+    public ResponseEntity<AnswerResponse> updateAnswer(@PathVariable("id") UUID id,
+            @Valid @RequestBody UpdateAnswerRequest updateAnswerRequest) {
         logger.info("PUT /api/answers/{} - Updating answer", id);
-        AnswerResponseDto updatedAnswer = answerService.updateAnswer(id, updateAnswerDto);
+        AnswerResponse updatedAnswer = answerService.updateAnswer(id, updateAnswerRequest);
         return ResponseEntity.ok(updatedAnswer);
     }
 

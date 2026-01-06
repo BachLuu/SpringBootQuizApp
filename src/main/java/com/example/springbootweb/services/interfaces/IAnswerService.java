@@ -1,8 +1,9 @@
 package com.example.springbootweb.services.interfaces;
 
-import com.example.springbootweb.entities.dtos.answers.AnswerResponseDto;
-import com.example.springbootweb.entities.dtos.answers.CreateAnswerDto;
-import com.example.springbootweb.entities.dtos.answers.UpdateAnswerDto;
+import com.example.springbootweb.entities.dtos.answers.AnswerResponse;
+import com.example.springbootweb.entities.dtos.answers.AnswerSummaryResponse;
+import com.example.springbootweb.entities.dtos.answers.CreateAnswerRequest;
+import com.example.springbootweb.entities.dtos.answers.UpdateAnswerRequest;
 
 import org.springframework.data.domain.Page;
 
@@ -10,21 +11,21 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IAnswerService {
-    List<AnswerResponseDto> getAllAnswers();
+    List<AnswerSummaryResponse> getAllAnswers();
 
-    Page<AnswerResponseDto> getPagedAnswers(Integer page, Integer size);
+    Page<AnswerSummaryResponse> getPagedAnswers(Integer page, Integer size);
 
-    AnswerResponseDto getAnswerById(UUID id);
+    AnswerResponse getAnswerById(UUID id);
 
-    List<AnswerResponseDto> getActiveAnswers();
+    List<AnswerSummaryResponse> getActiveAnswers();
 
-    List<AnswerResponseDto> searchByContent(String content);
+    List<AnswerSummaryResponse> searchByContent(String content);
 
-    List<AnswerResponseDto> getAnswersByQuestionId(UUID questionId);
+    List<AnswerSummaryResponse> getAnswersByQuestionId(UUID questionId);
 
-    AnswerResponseDto createAnswer(CreateAnswerDto createAnswerDto);
+    AnswerResponse createAnswer(CreateAnswerRequest createAnswerRequest);
 
-    AnswerResponseDto updateAnswer(UUID id, UpdateAnswerDto updateAnswerDto);
+    AnswerResponse updateAnswer(UUID id, UpdateAnswerRequest updateAnswerRequest);
 
     void deleteAnswer(UUID id);
 

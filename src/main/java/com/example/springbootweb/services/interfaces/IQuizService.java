@@ -5,30 +5,30 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 
-import com.example.springbootweb.entities.dtos.quizzes.UpdateQuizDto;
-import com.example.springbootweb.entities.dtos.quizzes.CreateQuizDto;
-import com.example.springbootweb.entities.dtos.quizzes.QuizDetailDto;
-import com.example.springbootweb.entities.dtos.quizzes.QuizResponseDto;
+import com.example.springbootweb.entities.dtos.quizzes.CreateQuizRequest;
+import com.example.springbootweb.entities.dtos.quizzes.QuizDetailResponse;
+import com.example.springbootweb.entities.dtos.quizzes.QuizSummaryResponse;
+import com.example.springbootweb.entities.dtos.quizzes.UpdateQuizRequest;
 
 public interface IQuizService {
 
-    List<QuizResponseDto> getAllQuizzes();
+    List<QuizSummaryResponse> getAllQuizzes();
 
-    QuizDetailDto getQuizById(UUID id);
+    QuizDetailResponse getQuizById(UUID id);
 
-    List<QuizResponseDto> getActiveQuizzes();
+    List<QuizSummaryResponse> getActiveQuizzes();
 
-    List<QuizResponseDto> searchByTitle(String title);
+    List<QuizSummaryResponse> searchByTitle(String title);
 
-    List<QuizResponseDto> getQuizzesByDurationRange(int minDuration, int maxDuration);
+    List<QuizSummaryResponse> getQuizzesByDurationRange(int minDuration, int maxDuration);
 
-    QuizResponseDto createQuiz(CreateQuizDto createQuizDto);
+    QuizDetailResponse createQuiz(CreateQuizRequest createQuizRequest);
 
-    QuizResponseDto updateQuiz(UUID id, UpdateQuizDto updateQuizDto);
+    QuizDetailResponse updateQuiz(UUID id, UpdateQuizRequest updateQuizRequest);
 
     void deleteQuiz(UUID id);
 
     long getTotalQuizzes();
 
-    Page<QuizResponseDto> getPagedQuizzes(Integer page, Integer size);
+    Page<QuizSummaryResponse> getPagedQuizzes(Integer page, Integer size);
 }

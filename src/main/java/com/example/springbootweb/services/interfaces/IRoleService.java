@@ -1,8 +1,9 @@
 package com.example.springbootweb.services.interfaces;
 
-import com.example.springbootweb.entities.dtos.roles.CreateRoleDto;
-import com.example.springbootweb.entities.dtos.roles.RoleResponseDto;
-import com.example.springbootweb.entities.dtos.roles.UpdateRoleDto;
+import com.example.springbootweb.entities.dtos.roles.CreateRoleRequest;
+import com.example.springbootweb.entities.dtos.roles.RoleDetailResponse;
+import com.example.springbootweb.entities.dtos.roles.RoleSummaryResponse;
+import com.example.springbootweb.entities.dtos.roles.UpdateRoleRequest;
 
 import org.springframework.data.domain.Page;
 
@@ -10,19 +11,19 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IRoleService {
-    List<RoleResponseDto> getAllRoles();
+    List<RoleSummaryResponse> getAllRoles();
 
-    Page<RoleResponseDto> getPagedRoles(Integer page, Integer size);
+    Page<RoleSummaryResponse> getPagedRoles(Integer page, Integer size);
 
-    RoleResponseDto getRoleById(UUID id);
+    RoleDetailResponse getRoleById(UUID id);
 
-    List<RoleResponseDto> getActiveRoles();
+    List<RoleSummaryResponse> getActiveRoles();
 
-    List<RoleResponseDto> searchByName(String name);
+    List<RoleSummaryResponse> searchByName(String name);
 
-    RoleResponseDto createRole(CreateRoleDto createRoleDto);
+    RoleDetailResponse createRole(CreateRoleRequest createRoleRequest);
 
-    RoleResponseDto updateRole(UUID id, UpdateRoleDto updateRoleDto);
+    RoleDetailResponse updateRole(UUID id, UpdateRoleRequest updateRoleRequest);
 
     void deleteRole(UUID id);
 

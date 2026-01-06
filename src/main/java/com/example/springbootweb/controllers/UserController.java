@@ -1,8 +1,9 @@
 package com.example.springbootweb.controllers;
 
-import com.example.springbootweb.entities.dtos.users.CreateUserDto;
-import com.example.springbootweb.entities.dtos.users.UpdateUserDto;
-import com.example.springbootweb.entities.dtos.users.UserResponseDto;
+import com.example.springbootweb.entities.dtos.users.CreateUserRequest;
+import com.example.springbootweb.entities.dtos.users.UpdateUserRequest;
+import com.example.springbootweb.entities.dtos.users.UserDetailResponse;
+import com.example.springbootweb.entities.dtos.users.UserSummaryResponse;
 import com.example.springbootweb.services.interfaces.IUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,83 +24,85 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserController {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-    private final IUserService userService;
+	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-    @GetMapping
-    public ResponseEntity<List<UserResponseDto>> getAllUsers() {
-        logger.info("GET /api/users - Fetching all users");
-        List<UserResponseDto> users = userService.getAllUsers();
-        if (users.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(users);
-    }
+	private final IUserService userService;
 
-    @GetMapping("/paged")
-    public ResponseEntity<Page<UserResponseDto>> getPagedUsers(
-            @RequestParam(name = "page", defaultValue = "0") Integer page,
-            @RequestParam(name = "size", defaultValue = "10") Integer size) {
-        logger.info("GET /api/users/paged - Fetching users with pagination, page: {}, size: {}", page, size);
-        Page<UserResponseDto> users = userService.getPagedUsers(page, size);
-        return ResponseEntity.ok(users);
-    }
+	@GetMapping
+	public ResponseEntity<List<UserSummaryResponse>> getAllUsers() {
+		logger.info("GET /api/users - Fetching all users");
+		List<UserSummaryResponse> users = userService.getAllUsers();
+		if (users.isEmpty()) {
+			return ResponseEntity.noContent().build();
+		}
+		return ResponseEntity.ok(users);
+	}
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserResponseDto> getUserById(@PathVariable("id") UUID id) {
-        logger.info("GET /api/users/{} - Fetching user details", id);
-        UserResponseDto user = userService.getUserById(id);
-        return ResponseEntity.ok(user);
-    }
+	@GetMapping("/paged")
+	public ResponseEntity<Page<UserSummaryResponse>> getPagedUsers(
+			@RequestParam(name = "page", defaultValue = "0") Integer page,
+			@RequestParam(name = "size", defaultValue = "10") Integer size) {
+		logger.info("GET /api/users/paged - Fetching users with pagination, page: {}, size: {}", page, size);
+		Page<UserSummaryResponse> users = userService.getPagedUsers(page, size);
+		return ResponseEntity.ok(users);
+	}
 
-    @GetMapping("/active")
-    public ResponseEntity<List<UserResponseDto>> getActiveUsers() {
-        logger.info("GET /api/users/active - Fetching active users");
-        List<UserResponseDto> users = userService.getActiveUsers();
-        if (users.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(users);
-    }
+	@GetMapping("/{id}")
+	public ResponseEntity<UserDetailResponse> getUserById(@PathVariable("id") UUID id) {
+		logger.info("GET /api/users/{} - Fetching user details", id);
+		UserDetailResponse user = userService.getUserById(id);
+		return ResponseEntity.ok(user);
+	}
 
-    @GetMapping("/search")
-    public ResponseEntity<List<UserResponseDto>> searchUsers(@RequestParam("keyword") String keyword) {
-        logger.info("GET /api/users/search - Searching users with keyword: {}", keyword);
-        List<UserResponseDto> users = userService.searchUsers(keyword);
-        if (users.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(users);
-    }
+	@GetMapping("/active")
+	public ResponseEntity<List<UserSummaryResponse>> getActiveUsers() {
+		logger.info("GET /api/users/active - Fetching active users");
+		List<UserSummaryResponse> users = userService.getActiveUsers();
+		if (users.isEmpty()) {
+			return ResponseEntity.noContent().build();
+		}
+		return ResponseEntity.ok(users);
+	}
 
-    @PostMapping
-    public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody CreateUserDto createUserDto) {
-        logger.info("POST /api/users - Creating new user: {}", createUserDto.getEmail());
-        UserResponseDto createdUser = userService.createUser(createUserDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
-    }
+	@GetMapping("/search")
+	public ResponseEntity<List<UserSummaryResponse>> searchUsers(@RequestParam("keyword") String keyword) {
+		logger.info("GET /api/users/search - Searching users with keyword: {}", keyword);
+		List<UserSummaryResponse> users = userService.searchUsers(keyword);
+		if (users.isEmpty()) {
+			return ResponseEntity.noContent().build();
+		}
+		return ResponseEntity.ok(users);
+	}
 
-    @PutMapping("/{id}")
-    public ResponseEntity<UserResponseDto> updateUser(@PathVariable("id") UUID id,
-            @Valid @RequestBody UpdateUserDto updateUserDto) {
-        logger.info("PUT /api/users/{} - Updating user", id);
-        UserResponseDto updatedUser = userService.updateUser(id, updateUserDto);
-        return ResponseEntity.ok(updatedUser);
-    }
+	@PostMapping
+	public ResponseEntity<UserDetailResponse> createUser(@Valid @RequestBody CreateUserRequest createUserRequest) {
+		logger.info("POST /api/users - Creating new user: {}", createUserRequest.email());
+		UserDetailResponse createdUser = userService.createUser(createUserRequest);
+		return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+	}
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable("id") UUID id) {
-        logger.info("DELETE /api/users/{} - Deleting user", id);
-        userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
-    }
+	@PutMapping("/{id}")
+	public ResponseEntity<UserDetailResponse> updateUser(@PathVariable("id") UUID id,
+			@Valid @RequestBody UpdateUserRequest updateUserRequest) {
+		logger.info("PUT /api/users/{} - Updating user", id);
+		UserDetailResponse updatedUser = userService.updateUser(id, updateUserRequest);
+		return ResponseEntity.ok(updatedUser);
+	}
 
-    @GetMapping("/count")
-    public ResponseEntity<Map<String, Long>> getTotalUsers() {
-        logger.info("GET /api/users/count - Fetching total user count");
-        long count = userService.getTotalUsers();
-        Map<String, Long> response = new HashMap<>();
-        response.put("total", count);
-        return ResponseEntity.ok(response);
-    }
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> deleteUser(@PathVariable("id") UUID id) {
+		logger.info("DELETE /api/users/{} - Deleting user", id);
+		userService.deleteUser(id);
+		return ResponseEntity.noContent().build();
+	}
+
+	@GetMapping("/count")
+	public ResponseEntity<Map<String, Long>> getTotalUsers() {
+		logger.info("GET /api/users/count - Fetching total user count");
+		long count = userService.getTotalUsers();
+		Map<String, Long> response = new HashMap<>();
+		response.put("total", count);
+		return ResponseEntity.ok(response);
+	}
+
 }
