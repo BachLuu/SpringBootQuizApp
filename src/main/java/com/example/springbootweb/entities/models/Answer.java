@@ -28,37 +28,34 @@ import org.jspecify.annotations.NonNull;
 @Builder
 public class Answer {
 
-  @Id
-  @UuidGenerator
-  private UUID id;
+	@Id
+	@UuidGenerator
+	private UUID id;
 
-  @NonNull
-  @NotNull
-  @Size(min = 5, max = 5000)
-  @Column(nullable = false, columnDefinition = "TEXT")
-  private String content;
+	@NonNull
+	@NotNull
+	@Size(min = 5, max = 5000)
+	@Column(nullable = false, columnDefinition = "TEXT")
+	private String content;
 
-  @NonNull
-  @NotNull
-  @Column(nullable = false)
-  private Boolean isCorrect;
+	@NonNull
+	@NotNull
+	@Column(nullable = false)
+	private Boolean isCorrect;
 
-  @NonNull
-  @Builder.Default
-  @Column(nullable = false)
-  private Boolean isActive = true;
+	@NonNull
+	@Builder.Default
+	@Column(nullable = false)
+	private Boolean isActive = true;
 
-  @Basic(fetch = FetchType.LAZY)
-  @NonNull
-  @NotNull
-  @Column(
-    name = "question_id",
-    nullable = false,
-    columnDefinition = "uniqueidentifier"
-  )
-  private UUID questionId;
+	@Basic(fetch = FetchType.LAZY)
+	@NonNull
+	@NotNull
+	@Column(name = "question_id", nullable = false, columnDefinition = "uniqueidentifier")
+	private UUID questionId;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "question_id", insertable = false, updatable = false)
-  private Question question;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "question_id", insertable = false, updatable = false)
+	private Question question;
+
 }
