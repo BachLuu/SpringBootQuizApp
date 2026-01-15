@@ -34,7 +34,7 @@ spring:
       allowed-origin-patterns:
         - http://localhost:5173
         - vscode-webview://*
-      allowed-methods: [GET, POST, PUT, DELETE, OPTIONS]
+      allowed-methods: [GET, POST, PUT, DELETE, PATCH, OPTIONS]
       allowed-headers: ["*"]
       allow-credentials: true
       max-age: 3600

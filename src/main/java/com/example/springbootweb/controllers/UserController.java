@@ -81,7 +81,7 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
 	}
 
-	@PutMapping("/{id}")
+	@PatchMapping("/{id}")
 	public ResponseEntity<UserDetailResponse> updateUser(@PathVariable("id") UUID id,
 			@Valid @RequestBody UpdateUserRequest updateUserRequest) {
 		logger.info("PUT /api/users/{} - Updating user", id);
