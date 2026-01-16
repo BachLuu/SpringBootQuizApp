@@ -1,3 +1,0 @@
---liquibase formatted sql
---changeset init:bootstrap
--- includeAll: classpath:db/changelog

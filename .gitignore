@@ -44,3 +44,7 @@ data/liquibase/QuizSpringSqlServer.liquibase.properties
 data/liquibase/settings.json
 SpringBootWeb.code-workspace
 logs/
+db/password.txt
+requirement.md
+.github/skills/SKILL.md
+.github/skills/java-spring/JAVA_SPRING.md

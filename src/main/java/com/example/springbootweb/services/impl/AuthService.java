@@ -1,5 +1,7 @@
 package com.example.springbootweb.services.impl;
 
+import java.util.UUID;
+
 import org.springframework.data.util.Pair;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -125,6 +127,13 @@ public class AuthService implements IAuthService {
 			return Pair.of(true, newAccessToken);
 		}
 		return Pair.of(true, validationResult.getSecond());
+	}
+
+	@Override
+	public UUID getUserIdByEmail(String email) {
+		User user = userRepository.findByEmail(email)
+			.orElseThrow(() -> new ResourceNotFoundException(ErrorMessage.USER_NOT_FOUND));
+		return user.getId();
 	}
 
 }

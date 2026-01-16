@@ -1,5 +1,7 @@
 package com.example.springbootweb.services.interfaces;
 
+import java.util.UUID;
+
 import com.example.springbootweb.entities.dtos.auths.LoginRequestDto;
 import com.example.springbootweb.entities.dtos.auths.LoginResponseDto;
 import com.example.springbootweb.entities.dtos.auths.RegisterRequestDto;
@@ -19,4 +21,11 @@ public interface IAuthService {
     void logout(HttpServletRequest request, HttpServletResponse response);
 
     Pair<Boolean, String> refreshToken(HttpServletRequest request, HttpServletResponse response);
+
+    /**
+     * Get user ID by email (username from UserDetails)
+     * @param email The user's email address
+     * @return UUID of the user
+     */
+    UUID getUserIdByEmail(String email);
 }

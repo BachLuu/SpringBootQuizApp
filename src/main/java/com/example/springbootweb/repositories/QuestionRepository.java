@@ -12,6 +12,11 @@ import java.util.UUID;
 public interface QuestionRepository extends JpaRepository<Question, UUID> {
     List<Question> findByIsActiveTrue();
 
+    /**
+     * Count active questions for analytics
+     */
+    Long countByIsActiveTrue();
+
     List<Question> findByContentContainingIgnoreCase(String content);
 
     List<Question> findByQuestionType(QuestionType questionType);

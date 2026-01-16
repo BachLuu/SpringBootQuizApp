@@ -26,38 +26,40 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class UserAnswer {
-    @Id
-    @UuidGenerator
-    private UUID id;
 
-    @NonNull
-    @NotNull
-    @Column(name = "user_quiz_id", columnDefinition = "uniqueidentifier")
-    private UUID userQuizId;
+	@Id
+	@UuidGenerator
+	private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_quiz_id", insertable = false, updatable = false)
-    private UserQuiz userQuiz;
+	@NonNull
+	@NotNull
+	@Column(name = "user_quiz_id", columnDefinition = "uniqueidentifier")
+	private UUID userQuizId;
 
-    @NonNull
-    @NotNull
-    @Column(name = "question_id", columnDefinition = "uniqueidentifier")
-    private UUID questionId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_quiz_id", insertable = false, updatable = false)
+	private UserQuiz userQuiz;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "question_id", insertable = false, updatable = false)
-    private Question question;
+	@NonNull
+	@NotNull
+	@Column(name = "question_id", columnDefinition = "uniqueidentifier")
+	private UUID questionId;
 
-    @Basic(fetch = FetchType.LAZY)
-    @NonNull
-    @NotNull
-    @Column(name = "answer_id", columnDefinition = "uniqueidentifier")
-    private UUID answerId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "question_id", insertable = false, updatable = false)
+	private Question question;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "answer_id", insertable = false, updatable = false)
-    private Answer answer;
+	@Basic(fetch = FetchType.LAZY)
+	@NonNull
+	@NotNull
+	@Column(name = "answer_id", columnDefinition = "uniqueidentifier")
+	private UUID answerId;
 
-    @Column(nullable = false)
-    private Boolean isCorrect;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "answer_id", insertable = false, updatable = false)
+	private Answer answer;
+
+	@Column(nullable = false)
+	private Boolean isCorrect;
+
 }
