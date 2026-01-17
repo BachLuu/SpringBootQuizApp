@@ -1,0 +1,13 @@
+package com.example.springbootweb.entities.projections.analytics;
+
+import java.math.BigDecimal;
+
+/**
+ * Projection interface for score statistics.
+ * Used by Spring Data JPA to map query results in a type-safe manner.
+ */
+public interface ScoreStatsProjection {
+    BigDecimal getAvgScore();
+    BigDecimal getMaxScore();
+    BigDecimal getMinScore();
+}
