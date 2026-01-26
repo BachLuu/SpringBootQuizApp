@@ -12,24 +12,27 @@ import com.example.springbootweb.entities.dtos.questions.QuestionSummaryResponse
 import com.example.springbootweb.entities.dtos.questions.UpdateQuestionRequest;
 import com.example.springbootweb.entities.models.Question;
 
-@Mapper(config = CommonMapperConfig.class)
+@Mapper(config = CommonMapperConfig.class, uses = { QuestionOptionMapper.class })
 public interface QuestionMapper {
 
-    @Mapping(target = "id", source = "id")
-    QuestionDetailResponse toResponse(Question question);
+	@Mapping(target = "options", source = "options")
+	QuestionDetailResponse toResponse(Question question);
 
-    @Mapping(target = "id", source = "id")
-    QuestionSummaryResponse toSummary(Question question);
+	@Mapping(target = "id", source = "id")
+	QuestionSummaryResponse toSummary(Question question);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "quizQuestions", ignore = true)
-    @Mapping(target = "answers", ignore = true)
-    @Mapping(target = "isActive", constant = "true")
-    Question toEntity(CreateQuestionRequest request);
+	@Mapping(target = "id", ignore = true)
+	@Mapping(target = "quizQuestions", ignore = true)
+	@Mapping(target = "answers", ignore = true)
+	@Mapping(target = "options", ignore = true)
+	@Mapping(target = "isActive", constant = "true")
+	Question toEntity(CreateQuestionRequest request);
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "quizQuestions", ignore = true)
-    @Mapping(target = "answers", ignore = true)
-    void updateEntity(UpdateQuestionRequest request, @MappingTarget Question question);
+	@BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+	@Mapping(target = "id", ignore = true)
+	@Mapping(target = "quizQuestions", ignore = true)
+	@Mapping(target = "answers", ignore = true)
+	@Mapping(target = "options", ignore = true)
+	void updateEntity(UpdateQuestionRequest request, @MappingTarget Question question);
+
 }

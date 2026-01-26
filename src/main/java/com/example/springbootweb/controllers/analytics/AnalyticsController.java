@@ -32,7 +32,7 @@ public class AnalyticsController implements AnalyticsApi {
     // ==================== Quiz Statistics ====================
 
     @Override
-    @PreAuthorize("hasAnyRole('Admin', 'User')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     public ResponseEntity<QuizStatisticsResponse> getQuizStatistics(UUID quizId) {
         LOG.info("Request to get statistics for quiz: {}", quizId);
         QuizStatisticsResponse response = analyticsService.getQuizStatistics(quizId);
@@ -42,10 +42,11 @@ public class AnalyticsController implements AnalyticsApi {
     // ==================== User Performance ====================
 
     @Override
-    @PreAuthorize("hasAnyRole('Admin', 'User')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     public ResponseEntity<UserPerformanceResponse> getUserPerformance(UUID userId) {
         LOG.info("Request to get performance for user: {}", userId);
-        // Note: Additional check can be added here to verify user can only access their own data
+        // Note: Additional check can be added here to verify user can only access their
+        // own data
         // unless they are admin
         UserPerformanceResponse response = analyticsService.getUserPerformance(userId);
         return ResponseEntity.ok(response);
@@ -54,7 +55,7 @@ public class AnalyticsController implements AnalyticsApi {
     // ==================== Admin Dashboard ====================
 
     @Override
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<AdminDashboardResponse> getAdminDashboard() {
         LOG.info("Request to get admin dashboard");
         AdminDashboardResponse response = analyticsService.getAdminDashboard();
@@ -64,7 +65,7 @@ public class AnalyticsController implements AnalyticsApi {
     // ==================== Question Difficulty Analysis ====================
 
     @Override
-    @PreAuthorize("hasAnyRole('Admin', 'User')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     public ResponseEntity<QuestionDifficultyResponse> getQuestionDifficultyAnalysis(UUID questionId) {
         LOG.info("Request to get difficulty analysis for question: {}", questionId);
         QuestionDifficultyResponse response = analyticsService.getQuestionDifficultyAnalysis(questionId);

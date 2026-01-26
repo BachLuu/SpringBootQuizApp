@@ -1,7 +1,10 @@
 package com.example.springbootweb.services.impl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -12,15 +15,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.springbootweb.entities.constants.ErrorMessage;
+import com.example.springbootweb.entities.dtos.questionoption.UpdateQuestionOptionRequest;
 import com.example.springbootweb.entities.dtos.questions.CreateQuestionRequest;
 import com.example.springbootweb.entities.dtos.questions.QuestionDetailResponse;
 import com.example.springbootweb.entities.dtos.questions.QuestionSummaryResponse;
 import com.example.springbootweb.entities.dtos.questions.UpdateQuestionRequest;
 import com.example.springbootweb.entities.enums.QuestionType;
 import com.example.springbootweb.entities.models.Question;
+import com.example.springbootweb.entities.models.QuestionOption;
 import com.example.springbootweb.exceptions.BadRequestException;
 import com.example.springbootweb.exceptions.ResourceNotFoundException;
 import com.example.springbootweb.mappers.QuestionMapper;
+import com.example.springbootweb.mappers.QuestionOptionMapper;
 import com.example.springbootweb.repositories.QuestionRepository;
 import com.example.springbootweb.services.interfaces.IQuestionService;
 
@@ -35,6 +41,8 @@ public class QuestionService implements IQuestionService {
 	private final QuestionRepository questionRepository;
 
 	private final QuestionMapper questionMapper;
+
+	private final QuestionOptionMapper questionOptionMapper;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -102,6 +110,20 @@ public class QuestionService implements IQuestionService {
 	public QuestionDetailResponse createQuestion(CreateQuestionRequest createQuestionRequest) {
 		logger.info("Creating new question");
 		Question question = questionMapper.toEntity(createQuestionRequest);
+
+		// Handle options if provided
+		if (createQuestionRequest.options() != null && !createQuestionRequest.options().isEmpty()) {
+			List<QuestionOption> options = createQuestionRequest.options().stream().map(optionRequest -> {
+				QuestionOption option = questionOptionMapper.toEntityFromCreate(optionRequest)
+					.builder()
+					.question(question)
+					.questionId(question.getId())
+					.build();
+				return option;
+			}).collect(Collectors.toList());
+			question.setOptions(options);
+		}
+
 		Question savedQuestion = questionRepository.save(question);
 		return questionMapper.toResponse(savedQuestion);
 	}
@@ -114,8 +136,49 @@ public class QuestionService implements IQuestionService {
 			.orElseThrow(() -> new ResourceNotFoundException(ErrorMessage.QUESTION_NOT_FOUND + id));
 		questionMapper.updateEntity(updateQuestionRequest, question);
 
+		// Handle options if provided (replace strategy)
+		if (updateQuestionRequest.options() != null) {
+			updateQuestionOptions(question, updateQuestionRequest.options());
+		}
+
 		Question updatedQuestion = questionRepository.save(question);
 		return questionMapper.toResponse(updatedQuestion);
+	}
+
+	/**
+	 * Update question options với strategy: - Option có id đã tồn tại -> update - Option
+	 * có id không tồn tại hoặc null -> tạo mới - Option cũ không có trong request -> xóa
+	 * (orphanRemoval)
+	 */
+	private void updateQuestionOptions(Question question, List<UpdateQuestionOptionRequest> optionRequests) {
+		// Map existing options by id for lookup
+		Map<UUID, QuestionOption> existingOptionsMap = question.getOptions()
+			.stream()
+			.collect(Collectors.toMap(QuestionOption::getId, Function.identity()));
+
+		List<QuestionOption> updatedOptions = new ArrayList<>();
+
+		// Loop through request options
+		for (UpdateQuestionOptionRequest optionRequest : optionRequests) {
+			// Is option exists in existing options
+			if (optionRequest.id() != null && existingOptionsMap.containsKey(optionRequest.id())) {
+				// Update existing option need to update
+				QuestionOption existingOption = existingOptionsMap.get(optionRequest.id());
+				questionOptionMapper.updateEntity(optionRequest, existingOption);
+				updatedOptions.add(existingOption);
+			}
+			else {
+				// Create new option
+				QuestionOption newOption = questionOptionMapper.toEntityFromUpdate(optionRequest);
+				newOption.setQuestion(question);
+				newOption.setQuestionId(question.getId());
+				updatedOptions.add(newOption);
+			}
+		}
+
+		// Clear and add all (orphanRemoval will delete options not in the new list)
+		question.getOptions().clear();
+		question.getOptions().addAll(updatedOptions);
 	}
 
 	@Override

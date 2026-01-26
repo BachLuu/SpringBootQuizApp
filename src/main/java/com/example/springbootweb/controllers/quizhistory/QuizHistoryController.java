@@ -1,4 +1,4 @@
-package com.example.springbootweb.controllers.quizsession;
+package com.example.springbootweb.controllers.quizhistory;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.springbootweb.controllers.quizsession.api.QuizHistoryApi;
+import com.example.springbootweb.controllers.quizhistory.api.QuizHistoryApi;
 import com.example.springbootweb.entities.dtos.quizsessions.LeaderboardResponse;
 import com.example.springbootweb.entities.dtos.quizsessions.QuizSessionSummaryResponse;
 import com.example.springbootweb.services.interfaces.IAuthService;
@@ -65,7 +65,7 @@ public class QuizHistoryController implements QuizHistoryApi {
 
 	@Override
 	@GetMapping("/user/{userId}")
-	@PreAuthorize("hasRole('Admin')")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<List<QuizSessionSummaryResponse>> getUserHistory(@PathVariable UUID userId) {
 		log.info("GET /api/quiz-history/user/{} (Admin)", userId);
 		List<QuizSessionSummaryResponse> history = quizSessionService.getUserHistory(userId);

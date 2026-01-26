@@ -1,4 +1,4 @@
-package com.example.springbootweb.controllers.quizsession.api;
+package com.example.springbootweb.controllers.quizhistory.api;
 
 import java.util.List;
 import java.util.UUID;

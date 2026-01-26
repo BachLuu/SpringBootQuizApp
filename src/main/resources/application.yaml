@@ -27,7 +27,7 @@ spring:
       enabled: ALWAYS
 
   liquibase:
-    enabled: false
+    change-log: classpath:db/changelog/db.changeLog-master.xml
 
   web:
     cors:

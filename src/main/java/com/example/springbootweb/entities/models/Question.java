@@ -33,32 +33,42 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class Question {
-    @Id
-    @GeneratedValue(generator = "UUID")
-    @UuidGenerator
-    private UUID id;
 
-    @NonNull
-    @NotNull
-    @Size(min = 5, max = 5000)
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String content;
+	@Id
+	@GeneratedValue(generator = "UUID")
+	@UuidGenerator
+	private UUID id;
 
-    @NonNull
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(name = "question_type", nullable = false)
-    private QuestionType questionType;
+	@NonNull
+	@NotNull
+	@Size(min = 5, max = 5000)
+	@Column(nullable = false, columnDefinition = "TEXT")
+	private String content;
 
-    @Builder.Default
-    @Column(nullable = false)
-    private Boolean isActive = true;
+	@NonNull
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	@Column(name = "question_type", nullable = false)
+	private QuestionType questionType;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @Builder.Default
-    private List<QuizQuestion> quizQuestions = new ArrayList<>();
+	@Builder.Default
+	@Column(nullable = false)
+	private Boolean isActive = true;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @Builder.Default
-    private List<Answer> answers = new ArrayList<>();
+	@OneToMany(mappedBy = "question", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@Builder.Default
+	private List<QuizQuestion> quizQuestions = new ArrayList<>();
+
+	@OneToMany(mappedBy = "question", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@Builder.Default
+	private List<Answer> answers = new ArrayList<>();
+
+	/**
+	 * Danh sách các lựa chọn cho câu hỏi (A, B, C, D...). Chỉ áp dụng cho SINGLE_CHOICE
+	 * và MULTIPLE_CHOICE. Có thể rỗng nếu là TRUE_FALSE hoặc LONG_ANSWER.
+	 */
+	@OneToMany(mappedBy = "question", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@Builder.Default
+	private List<QuestionOption> options = new ArrayList<>();
+
 }

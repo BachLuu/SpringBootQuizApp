@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
+import com.example.springbootweb.entities.enums.DifficultyLevel;
+
 /**
  * Response DTO for Question Difficulty Analysis
  * Analyzes how difficult a question is based on user performance
@@ -36,7 +38,7 @@ public record QuestionDifficultyResponse(
         BigDecimal correctRate,
         BigDecimal incorrectRate,
         BigDecimal skippedRate,
-        String difficultyLevel,     // VERY_EASY, EASY, MEDIUM, HARD, VERY_HARD
+        DifficultyLevel difficultyLevel,
         BigDecimal difficultyScore  // 0-100 scale
     ) {}
     
