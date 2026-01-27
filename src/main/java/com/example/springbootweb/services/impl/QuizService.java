@@ -184,4 +184,25 @@ public class QuizService implements IQuizService {
 
         return count;
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<QuizDetailResponse> getPagedQuizDetail(Integer page, Integer size) {
+        int pageNumber = page == null ? 0 : page;
+        int pageSize = size == null ? 10 : size;
+
+        logger.info("Fetching paged quiz details - page: {}, size: {}", pageNumber, pageSize);
+
+        if (pageNumber < 0) {
+            throw new BadRequestException("Page must be >= 0");
+        }
+        if (pageSize < 1 || pageSize > 100) {
+            throw new BadRequestException("Size must be between 1 and 100");
+        }
+
+        Page<Quiz> quizPage = quizRepository.findAll(PageRequest.of(pageNumber, pageSize));
+        logger.debug("Found {} quiz details in page {}", quizPage.getNumberOfElements(), pageNumber);
+
+        return quizPage.map(quizMapper::toResponse);
+    }
 }

@@ -47,6 +47,16 @@ public interface QuizApi {
             @Parameter(description = "Page number (0-based)", example = "0") Integer page,
             @Parameter(description = "Page size", example = "10") Integer size);
 
+    @Operation(summary = "Get paged quiz details", 
+               description = "Retrieve detailed quiz information with pagination support")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Successfully retrieved paged quiz details",
+            content = @Content(schema = @Schema(implementation = Page.class)))
+    })
+    ResponseEntity<Page<QuizDetailResponse>> getPagedQuizDetail(
+            @Parameter(description = "Page number (0-based)", example = "0") Integer page,
+            @Parameter(description = "Page size", example = "10") Integer size);
+
     @Operation(summary = "Get quiz by ID", 
                description = "Retrieve detailed information about a specific quiz")
     @ApiResponses({

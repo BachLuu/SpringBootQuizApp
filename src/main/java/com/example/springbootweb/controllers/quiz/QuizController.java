@@ -65,6 +65,15 @@ public class QuizController implements QuizApi {
     }
 
     @Override
+    @GetMapping("/paged-detail")
+    public ResponseEntity<Page<QuizDetailResponse>> getPagedQuizDetail(
+            @RequestParam(name = "page", defaultValue = "0") Integer page,
+            @RequestParam(name = "size", defaultValue = "10") Integer size) {
+        log.info("GET /api/quizzes/paged-detail - page: {}, size: {}", page, size);
+        return ResponseEntity.ok(quizService.getPagedQuizDetail(page, size));
+    }
+
+    @Override
     @GetMapping("/{id}")
     public ResponseEntity<QuizDetailResponse> getQuizById(@PathVariable("id") UUID id) {
         log.info("GET /api/quizzes/{}", id);

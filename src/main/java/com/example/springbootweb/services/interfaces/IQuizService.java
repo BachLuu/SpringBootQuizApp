@@ -31,4 +31,6 @@ public interface IQuizService {
     long getTotalQuizzes();
 
     Page<QuizSummaryResponse> getPagedQuizzes(Integer page, Integer size);
+
+    Page<QuizDetailResponse> getPagedQuizDetail(Integer page, Integer size);
 }
