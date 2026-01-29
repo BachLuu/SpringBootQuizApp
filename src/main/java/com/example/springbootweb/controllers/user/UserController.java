@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +25,7 @@ import com.example.springbootweb.controllers.user.api.UserApi;
 import com.example.springbootweb.entities.dtos.users.CreateUserRequest;
 import com.example.springbootweb.entities.dtos.users.UpdateUserRequest;
 import com.example.springbootweb.entities.dtos.users.UserDetailResponse;
+import com.example.springbootweb.entities.dtos.users.UserFilter;
 import com.example.springbootweb.entities.dtos.users.UserSummaryResponse;
 import com.example.springbootweb.services.interfaces.IUserService;
 
@@ -46,9 +48,10 @@ public class UserController implements UserApi {
 
     @Override
     @GetMapping
-    public ResponseEntity<List<UserSummaryResponse>> getAllUsers() {
-        log.info("GET /api/users");
-        List<UserSummaryResponse> users = userService.getAllUsers();
+    public ResponseEntity<List<UserSummaryResponse>> getAllUsers(
+            @ModelAttribute UserFilter filter) {
+        log.info("GET /api/users with filter: {}", filter);
+        List<UserSummaryResponse> users = userService.getAllUsers(filter);
         if (users.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -59,9 +62,10 @@ public class UserController implements UserApi {
     @GetMapping("/paged")
     public ResponseEntity<Page<UserSummaryResponse>> getPagedUsers(
             @RequestParam(name = "page", defaultValue = "0") Integer page,
-            @RequestParam(name = "size", defaultValue = "10") Integer size) {
-        log.info("GET /api/users/paged - page: {}, size: {}", page, size);
-        return ResponseEntity.ok(userService.getPagedUsers(page, size));
+            @RequestParam(name = "size", defaultValue = "10") Integer size,
+            @ModelAttribute UserFilter filter) {
+        log.info("GET /api/users/paged - page: {}, size: {}, filter: {}", page, size, filter);
+        return ResponseEntity.ok(userService.getPagedUsers(page, size, filter));
     }
 
     @Override

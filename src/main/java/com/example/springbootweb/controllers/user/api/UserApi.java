@@ -6,10 +6,12 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 import com.example.springbootweb.entities.dtos.users.CreateUserRequest;
 import com.example.springbootweb.entities.dtos.users.UpdateUserRequest;
 import com.example.springbootweb.entities.dtos.users.UserDetailResponse;
+import com.example.springbootweb.entities.dtos.users.UserFilter;
 import com.example.springbootweb.entities.dtos.users.UserSummaryResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,21 +33,23 @@ public interface UserApi {
     // ==================== READ Operations ====================
 
     @Operation(summary = "Get all users", 
-               description = "Retrieve a list of all users in the system")
+               description = "Retrieve a list of all users in the system with optional filtering")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Successfully retrieved user list"),
         @ApiResponse(responseCode = "204", description = "No users found")
     })
-    ResponseEntity<List<UserSummaryResponse>> getAllUsers();
+    ResponseEntity<List<UserSummaryResponse>> getAllUsers(
+            @ModelAttribute UserFilter filter);
 
     @Operation(summary = "Get paged users", 
-               description = "Retrieve users with pagination support")
+               description = "Retrieve users with pagination and optional filtering support")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Successfully retrieved paged users")
     })
     ResponseEntity<Page<UserSummaryResponse>> getPagedUsers(
             @Parameter(description = "Page number (0-based)", example = "0") Integer page,
-            @Parameter(description = "Page size", example = "10") Integer size);
+            @Parameter(description = "Page size", example = "10") Integer size,
+            @ModelAttribute UserFilter filter);
 
     @Operation(summary = "Get user by ID", 
                description = "Retrieve detailed information about a specific user")

@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +20,7 @@ import com.example.springbootweb.entities.constants.ErrorMessage;
 import com.example.springbootweb.entities.dtos.questionoption.UpdateQuestionOptionRequest;
 import com.example.springbootweb.entities.dtos.questions.CreateQuestionRequest;
 import com.example.springbootweb.entities.dtos.questions.QuestionDetailResponse;
+import com.example.springbootweb.entities.dtos.questions.QuestionFilter;
 import com.example.springbootweb.entities.dtos.questions.QuestionSummaryResponse;
 import com.example.springbootweb.entities.dtos.questions.UpdateQuestionRequest;
 import com.example.springbootweb.entities.enums.QuestionType;
@@ -28,6 +31,7 @@ import com.example.springbootweb.exceptions.ResourceNotFoundException;
 import com.example.springbootweb.mappers.QuestionMapper;
 import com.example.springbootweb.mappers.QuestionOptionMapper;
 import com.example.springbootweb.repositories.QuestionRepository;
+import com.example.springbootweb.repositories.specifications.QuestionSpecifications;
 import com.example.springbootweb.services.interfaces.IQuestionService;
 
 import lombok.RequiredArgsConstructor;
@@ -46,17 +50,20 @@ public class QuestionService implements IQuestionService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<QuestionSummaryResponse> getAllQuestions() {
-		logger.info("Fetching all questions");
-		List<Question> questions = questionRepository.findAll();
+	public List<QuestionSummaryResponse> getAllQuestions(QuestionFilter filter) {
+		logger.info("Fetching all questions with filter: {}", filter);
+		Specification<Question> spec = QuestionSpecifications.fromFilter(filter);
+		List<Question> questions = questionRepository.findAll(spec, Sort.by(Sort.Direction.ASC, "content"));
 		return questions.stream().map(questionMapper::toSummary).collect(Collectors.toList());
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public Page<QuestionSummaryResponse> getPagedQuestions(Integer page, Integer size) {
+	public Page<QuestionSummaryResponse> getPagedQuestions(Integer page, Integer size, QuestionFilter filter) {
 		int pageNumber = page == null ? 0 : page;
 		int pageSize = size == null ? 10 : size;
+
+		logger.info("Fetching paged questions - page: {}, size: {}, filter: {}", pageNumber, pageSize, filter);
 
 		if (pageNumber < 0) {
 			throw new BadRequestException("Page must be >= 0");
@@ -65,7 +72,8 @@ public class QuestionService implements IQuestionService {
 			throw new BadRequestException("Size must be between 1 and 100");
 		}
 
-		Page<Question> questionPage = questionRepository.findAll(PageRequest.of(pageNumber, pageSize));
+		Specification<Question> spec = QuestionSpecifications.fromFilter(filter);
+		Page<Question> questionPage = questionRepository.findAll(spec, PageRequest.of(pageNumber, pageSize));
 		return questionPage.map(questionMapper::toSummary);
 	}
 

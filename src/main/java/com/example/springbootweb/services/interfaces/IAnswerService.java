@@ -1,5 +1,6 @@
 package com.example.springbootweb.services.interfaces;
 
+import com.example.springbootweb.entities.dtos.answers.AnswerFilter;
 import com.example.springbootweb.entities.dtos.answers.AnswerResponse;
 import com.example.springbootweb.entities.dtos.answers.AnswerSummaryResponse;
 import com.example.springbootweb.entities.dtos.answers.CreateAnswerRequest;
@@ -11,9 +12,9 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IAnswerService {
-    List<AnswerSummaryResponse> getAllAnswers();
+    List<AnswerSummaryResponse> getAllAnswers(AnswerFilter filter);
 
-    Page<AnswerSummaryResponse> getPagedAnswers(Integer page, Integer size);
+    Page<AnswerSummaryResponse> getPagedAnswers(Integer page, Integer size, AnswerFilter filter);
 
     AnswerResponse getAnswerById(UUID id);
 

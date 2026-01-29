@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.example.springbootweb.entities.dtos.quizsessions.QuizQuestionResponse;
-import com.example.springbootweb.entities.dtos.quizsessions.QuizSessionResponse;
+import com.example.springbootweb.entities.dtos.quizsessions.QuizSessionDetailResponse;
 import com.example.springbootweb.entities.dtos.quizsessions.QuizSessionResultResponse;
 import com.example.springbootweb.entities.dtos.quizsessions.SubmitAnswerRequest;
 import com.example.springbootweb.entities.dtos.quizsessions.SubmitAnswerResponse;
@@ -33,11 +33,11 @@ public interface QuizSessionApi {
                description = "Creates a new quiz session for the authenticated user")
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "Session created successfully",
-            content = @Content(schema = @Schema(implementation = QuizSessionResponse.class))),
+            content = @Content(schema = @Schema(implementation = QuizSessionDetailResponse.class))),
         @ApiResponse(responseCode = "400", description = "Quiz not active or user already has active session"),
         @ApiResponse(responseCode = "404", description = "Quiz not found")
     })
-    ResponseEntity<QuizSessionResponse> startSession(
+    ResponseEntity<QuizSessionDetailResponse> startSession(
             @Parameter(description = "Quiz ID", required = true) UUID quizId,
             UserDetails userDetails);
 
@@ -48,7 +48,7 @@ public interface QuizSessionApi {
         @ApiResponse(responseCode = "403", description = "User doesn't own this session"),
         @ApiResponse(responseCode = "404", description = "Session not found")
     })
-    ResponseEntity<QuizSessionResponse> getSession(
+    ResponseEntity<QuizSessionDetailResponse> getSession(
             @Parameter(description = "Session ID", required = true) UUID sessionId,
             UserDetails userDetails);
 
@@ -59,7 +59,7 @@ public interface QuizSessionApi {
         @ApiResponse(responseCode = "400", description = "Session is not in progress"),
         @ApiResponse(responseCode = "404", description = "Session not found")
     })
-    ResponseEntity<QuizSessionResponse> pauseSession(
+    ResponseEntity<QuizSessionDetailResponse> pauseSession(
             @Parameter(description = "Session ID", required = true) UUID sessionId,
             UserDetails userDetails);
 
@@ -70,7 +70,7 @@ public interface QuizSessionApi {
         @ApiResponse(responseCode = "400", description = "Session is not paused or has expired"),
         @ApiResponse(responseCode = "404", description = "Session not found")
     })
-    ResponseEntity<QuizSessionResponse> resumeSession(
+    ResponseEntity<QuizSessionDetailResponse> resumeSession(
             @Parameter(description = "Session ID", required = true) UUID sessionId,
             UserDetails userDetails);
 

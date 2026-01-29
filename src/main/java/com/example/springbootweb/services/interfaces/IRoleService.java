@@ -2,6 +2,7 @@ package com.example.springbootweb.services.interfaces;
 
 import com.example.springbootweb.entities.dtos.roles.CreateRoleRequest;
 import com.example.springbootweb.entities.dtos.roles.RoleDetailResponse;
+import com.example.springbootweb.entities.dtos.roles.RoleFilter;
 import com.example.springbootweb.entities.dtos.roles.RoleSummaryResponse;
 import com.example.springbootweb.entities.dtos.roles.UpdateRoleRequest;
 
@@ -11,9 +12,9 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IRoleService {
-    List<RoleSummaryResponse> getAllRoles();
+    List<RoleSummaryResponse> getAllRoles(RoleFilter filter);
 
-    Page<RoleSummaryResponse> getPagedRoles(Integer page, Integer size);
+    Page<RoleSummaryResponse> getPagedRoles(Integer page, Integer size, RoleFilter filter);
 
     RoleDetailResponse getRoleById(UUID id);
 

@@ -3,6 +3,7 @@ package com.example.springbootweb.services.interfaces;
 import com.example.springbootweb.entities.dtos.users.CreateUserRequest;
 import com.example.springbootweb.entities.dtos.users.UpdateUserRequest;
 import com.example.springbootweb.entities.dtos.users.UserDetailResponse;
+import com.example.springbootweb.entities.dtos.users.UserFilter;
 import com.example.springbootweb.entities.dtos.users.UserSummaryResponse;
 
 import org.springframework.data.domain.Page;
@@ -11,9 +12,9 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IUserService {
-    List<UserSummaryResponse> getAllUsers();
+    List<UserSummaryResponse> getAllUsers(UserFilter filter);
 
-    Page<UserSummaryResponse> getPagedUsers(Integer page, Integer size);
+    Page<UserSummaryResponse> getPagedUsers(Integer page, Integer size, UserFilter filter);
 
     UserDetailResponse getUserById(UUID id);
 

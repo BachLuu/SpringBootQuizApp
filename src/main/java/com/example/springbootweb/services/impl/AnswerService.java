@@ -1,6 +1,7 @@
 package com.example.springbootweb.services.impl;
 
 import com.example.springbootweb.entities.constants.ErrorMessage;
+import com.example.springbootweb.entities.dtos.answers.AnswerFilter;
 import com.example.springbootweb.entities.dtos.answers.AnswerResponse;
 import com.example.springbootweb.entities.dtos.answers.AnswerSummaryResponse;
 import com.example.springbootweb.entities.dtos.answers.CreateAnswerRequest;
@@ -12,12 +13,15 @@ import com.example.springbootweb.exceptions.ResourceNotFoundException;
 import com.example.springbootweb.mappers.AnswerMapper;
 import com.example.springbootweb.repositories.AnswerRepository;
 import com.example.springbootweb.repositories.QuestionRepository;
+import com.example.springbootweb.repositories.specifications.AnswerSpecifications;
 import com.example.springbootweb.services.interfaces.IAnswerService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,9 +40,10 @@ public class AnswerService implements IAnswerService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<AnswerSummaryResponse> getAllAnswers() {
-        logger.info("Fetching all answers");
-        List<Answer> answers = answerRepository.findAll();
+    public List<AnswerSummaryResponse> getAllAnswers(AnswerFilter filter) {
+        logger.info("Fetching all answers with filter: {}", filter);
+        Specification<Answer> spec = AnswerSpecifications.fromFilter(filter);
+        List<Answer> answers = answerRepository.findAll(spec, Sort.by(Sort.Direction.ASC, "content"));
         return answers.stream()
                 .map(answerMapper::toSummary)
                 .collect(Collectors.toList());
@@ -46,9 +51,11 @@ public class AnswerService implements IAnswerService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<AnswerSummaryResponse> getPagedAnswers(Integer page, Integer size) {
+    public Page<AnswerSummaryResponse> getPagedAnswers(Integer page, Integer size, AnswerFilter filter) {
         int pageNumber = page == null ? 0 : page;
         int pageSize = size == null ? 10 : size;
+
+        logger.info("Fetching paged answers - page: {}, size: {}, filter: {}", pageNumber, pageSize, filter);
 
         if (pageNumber < 0) {
             throw new BadRequestException("Page must be >= 0");
@@ -57,7 +64,8 @@ public class AnswerService implements IAnswerService {
             throw new BadRequestException("Size must be between 1 and 100");
         }
 
-        Page<Answer> answerPage = answerRepository.findAll(PageRequest.of(pageNumber, pageSize));
+        Specification<Answer> spec = AnswerSpecifications.fromFilter(filter);
+        Page<Answer> answerPage = answerRepository.findAll(spec, PageRequest.of(pageNumber, pageSize));
         return answerPage.map(answerMapper::toSummary);
     }
 

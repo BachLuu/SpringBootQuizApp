@@ -4,11 +4,16 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+
 import com.example.springbootweb.entities.constants.ErrorMessage;
 import com.example.springbootweb.entities.dtos.quizzes.CreateQuizRequest;
 import com.example.springbootweb.entities.dtos.quizzes.QuizDetailResponse;
+import com.example.springbootweb.entities.dtos.quizzes.QuizFilter;
 import com.example.springbootweb.entities.dtos.quizzes.QuizSummaryResponse;
 import com.example.springbootweb.entities.dtos.quizzes.UpdateQuizRequest;
+import com.example.springbootweb.repositories.specifications.QuizSpecifications;
 import com.example.springbootweb.entities.models.Quiz;
 import com.example.springbootweb.exceptions.BadRequestException;
 import com.example.springbootweb.exceptions.ResourceNotFoundException;
@@ -34,10 +39,11 @@ public class QuizService implements IQuizService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<QuizSummaryResponse> getAllQuizzes() {
-        logger.info("Fetching all quizzes");
+    public List<QuizSummaryResponse> getAllQuizzes(QuizFilter filter) {
+        logger.info("Fetching all quizzes with filter: {}", filter);
 
-        List<Quiz> quizzes = quizRepository.findAll();
+        Specification<Quiz> spec = QuizSpecifications.fromFilter(filter);
+        List<Quiz> quizzes = quizRepository.findAll(spec, Sort.by(Sort.Direction.ASC, "title"));
         logger.debug("Found {} quizzes", quizzes.size());
 
         return quizzes.stream()
@@ -47,11 +53,11 @@ public class QuizService implements IQuizService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<QuizSummaryResponse> getPagedQuizzes(Integer page, Integer size) {
+    public Page<QuizSummaryResponse> getPagedQuizzes(Integer page, Integer size, QuizFilter filter) {
         int pageNumber = page == null ? 0 : page;
         int pageSize = size == null ? 10 : size;
 
-        logger.info("Fetching paged quizzes - page: {}, size: {}", pageNumber, pageSize);
+        logger.info("Fetching paged quizzes - page: {}, size: {}, filter: {}", pageNumber, pageSize, filter);
 
         if (pageNumber < 0) {
             throw new BadRequestException("Page must be >= 0");
@@ -60,7 +66,8 @@ public class QuizService implements IQuizService {
             throw new BadRequestException("Size must be between 1 and 100");
         }
 
-        Page<Quiz> quizPage = quizRepository.findAll(PageRequest.of(pageNumber, pageSize));
+        Specification<Quiz> spec = QuizSpecifications.fromFilter(filter);
+        Page<Quiz> quizPage = quizRepository.findAll(spec, PageRequest.of(pageNumber, pageSize));
         logger.debug("Found {} quizzes in page {}", quizPage.getNumberOfElements(), pageNumber);
 
         return quizPage.map(quizMapper::toSummary);
@@ -187,11 +194,11 @@ public class QuizService implements IQuizService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<QuizDetailResponse> getPagedQuizDetail(Integer page, Integer size) {
+    public Page<QuizDetailResponse> getPagedQuizDetail(Integer page, Integer size, QuizFilter filter) {
         int pageNumber = page == null ? 0 : page;
         int pageSize = size == null ? 10 : size;
 
-        logger.info("Fetching paged quiz details - page: {}, size: {}", pageNumber, pageSize);
+        logger.info("Fetching paged quiz details - page: {}, size: {}, filter: {}", pageNumber, pageSize, filter);
 
         if (pageNumber < 0) {
             throw new BadRequestException("Page must be >= 0");
@@ -200,7 +207,8 @@ public class QuizService implements IQuizService {
             throw new BadRequestException("Size must be between 1 and 100");
         }
 
-        Page<Quiz> quizPage = quizRepository.findAll(PageRequest.of(pageNumber, pageSize));
+        Specification<Quiz> spec = QuizSpecifications.fromFilter(filter);
+        Page<Quiz> quizPage = quizRepository.findAll(spec, PageRequest.of(pageNumber, pageSize));
         logger.debug("Found {} quiz details in page {}", quizPage.getNumberOfElements(), pageNumber);
 
         return quizPage.map(quizMapper::toResponse);

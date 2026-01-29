@@ -6,9 +6,11 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 import com.example.springbootweb.entities.dtos.questions.CreateQuestionRequest;
 import com.example.springbootweb.entities.dtos.questions.QuestionDetailResponse;
+import com.example.springbootweb.entities.dtos.questions.QuestionFilter;
 import com.example.springbootweb.entities.dtos.questions.QuestionSummaryResponse;
 import com.example.springbootweb.entities.dtos.questions.UpdateQuestionRequest;
 import com.example.springbootweb.entities.enums.QuestionType;
@@ -32,21 +34,23 @@ public interface QuestionApi {
     // ==================== READ Operations ====================
 
     @Operation(summary = "Get all questions", 
-               description = "Retrieve a list of all questions in the system")
+               description = "Retrieve a list of all questions in the system with optional filtering")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Successfully retrieved question list"),
         @ApiResponse(responseCode = "204", description = "No questions found")
     })
-    ResponseEntity<List<QuestionSummaryResponse>> getAllQuestions();
+    ResponseEntity<List<QuestionSummaryResponse>> getAllQuestions(
+            @ModelAttribute QuestionFilter filter);
 
     @Operation(summary = "Get paged questions", 
-               description = "Retrieve questions with pagination support")
+               description = "Retrieve questions with pagination and optional filtering support")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Successfully retrieved paged questions")
     })
     ResponseEntity<Page<QuestionSummaryResponse>> getPagedQuestions(
             @Parameter(description = "Page number (0-based)", example = "0") Integer page,
-            @Parameter(description = "Page size", example = "10") Integer size);
+            @Parameter(description = "Page size", example = "10") Integer size,
+            @ModelAttribute QuestionFilter filter);
 
     @Operation(summary = "Get question by ID", 
                description = "Retrieve detailed information about a specific question")

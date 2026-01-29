@@ -14,12 +14,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.springbootweb.entities.dtos.quizsessions.LeaderboardResponse;
 import com.example.springbootweb.entities.dtos.quizsessions.QuizQuestionResponse;
-import com.example.springbootweb.entities.dtos.quizsessions.QuizSessionResponse;
+import com.example.springbootweb.entities.dtos.quizsessions.QuizSessionDetailResponse;
+import com.example.springbootweb.entities.dtos.quizsessions.QuizSessionFilter;
 import com.example.springbootweb.entities.dtos.quizsessions.QuizSessionResultResponse;
 import com.example.springbootweb.entities.dtos.quizsessions.QuizSessionSummaryResponse;
 import com.example.springbootweb.entities.dtos.quizsessions.SubmitAnswerRequest;
@@ -35,11 +38,13 @@ import com.example.springbootweb.entities.models.SessionAnswer;
 import com.example.springbootweb.entities.models.User;
 import com.example.springbootweb.exceptions.BadRequestException;
 import com.example.springbootweb.exceptions.ResourceNotFoundException;
+import com.example.springbootweb.mappers.QuizSessionMapper;
 import com.example.springbootweb.repositories.AnswerRepository;
 import com.example.springbootweb.repositories.QuizRepository;
 import com.example.springbootweb.repositories.QuizSessionRepository;
 import com.example.springbootweb.repositories.SessionAnswerRepository;
 import com.example.springbootweb.repositories.UserRepository;
+import com.example.springbootweb.repositories.specifications.QuizSessionSpecifications;
 import com.example.springbootweb.services.interfaces.IQuizSessionService;
 
 import lombok.RequiredArgsConstructor;
@@ -64,17 +69,19 @@ public class QuizSessionService implements IQuizSessionService {
 
 	private final AnswerRepository answerRepository;
 
+	private final QuizSessionMapper quizSessionMapper;
+
 	// ==================== Session Lifecycle ====================
 
 	@Override
 	@Transactional
-	public QuizSessionResponse startSession(UUID quizId, UUID userId) {
+	public QuizSessionDetailResponse startSession(UUID quizId, UUID userId) {
 		log.info("Starting quiz session for quiz: {} by user: {}", quizId, userId);
 
 		// Validate quiz exists and is active
 		Quiz quiz = quizRepository.findById(quizId)
 			.orElseThrow(() -> new ResourceNotFoundException("Quiz not found: " + quizId));
-		//Check if quiz is active
+		// Check if quiz is active
 		if (Boolean.FALSE.equals(quiz.getIsActive())) {
 			throw new BadRequestException("Quiz is not active");
 		}
@@ -112,7 +119,7 @@ public class QuizSessionService implements IQuizSessionService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public QuizSessionResponse getSession(UUID sessionId, UUID userId) {
+	public QuizSessionDetailResponse getSession(UUID sessionId, UUID userId) {
 		QuizSession session = getAndValidateSession(sessionId, userId);
 		Quiz quiz = quizRepository.findById(session.getQuizId())
 			.orElseThrow(() -> new ResourceNotFoundException("Quiz not found"));
@@ -121,7 +128,7 @@ public class QuizSessionService implements IQuizSessionService {
 
 	@Override
 	@Transactional
-	public QuizSessionResponse pauseSession(UUID sessionId, UUID userId) {
+	public QuizSessionDetailResponse pauseSession(UUID sessionId, UUID userId) {
 		log.info("Pausing session: {}", sessionId);
 		QuizSession session = getAndValidateSession(sessionId, userId);
 
@@ -142,7 +149,7 @@ public class QuizSessionService implements IQuizSessionService {
 
 	@Override
 	@Transactional
-	public QuizSessionResponse resumeSession(UUID sessionId, UUID userId) {
+	public QuizSessionDetailResponse resumeSession(UUID sessionId, UUID userId) {
 		log.info("Resuming session: {}", sessionId);
 		QuizSession session = getAndValidateSession(sessionId, userId);
 
@@ -455,16 +462,27 @@ public class QuizSessionService implements IQuizSessionService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<QuizSessionSummaryResponse> getUserHistory(UUID userId) {
-		List<QuizSession> sessions = quizSessionRepository.findByUserIdOrderByCreatedAtDesc(userId);
-		return sessions.stream().map(this::mapToSummary).toList();
+	public List<QuizSessionSummaryResponse> getUserHistory(UUID userId, QuizSessionFilter quizSessionFilter) {
+
+		// Build Specification from filter
+		Specification<QuizSession> spec = QuizSessionSpecifications.fromFilter(quizSessionFilter);
+
+		return quizSessionRepository.findAll(spec, Sort.by(Sort.Direction.DESC, "createdAt"))
+			.stream()
+			.map(this::mapToSummary)
+			.toList();
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public Page<QuizSessionSummaryResponse> getUserHistory(UUID userId, int page, int size) {
-		Pageable pageable = PageRequest.of(page, size);
-		return quizSessionRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable).map(this::mapToSummary);
+	public Page<QuizSessionSummaryResponse> getUserHistory(UUID userId, int page, int size,
+			QuizSessionFilter quizSessionFilter) {
+
+		// Build Specification from filter
+		Specification<QuizSession> spec = QuizSessionSpecifications.fromFilter(quizSessionFilter);
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+		return quizSessionRepository.findAll(spec, pageable).map(this::mapToSummary);
 	}
 
 	@Override
@@ -600,38 +618,34 @@ public class QuizSessionService implements IQuizSessionService {
 		calculateFinalScore(session);
 	}
 
-	private QuizSessionResponse mapToResponse(QuizSession session, Quiz quiz) {
+	/**
+	 * Map QuizSession to QuizSessionDetailResponse using MapStruct.
+	 */
+	private QuizSessionDetailResponse mapToResponse(QuizSession session, Quiz quiz) {
 		User user = userRepository.findById(session.getUserId()).orElse(null);
-
-		return new QuizSessionResponse(session.getId(), quiz.getId(), quiz.getTitle(), session.getUserId(),
-				user != null ? user.getDisplayName() : null, session.getStatus(), session.getCreatedAt(),
-				session.getStartedAt(), session.getFinishedAt(), session.getExpiresAt(), session.getTimeSpentSeconds(),
-				session.getTotalQuestions(), session.getAnsweredQuestions(), session.getCorrectAnswers(),
-				session.getScore(), session.getPointsEarned(), session.getMaxPoints(), session.getIsPassed(),
-				session.getCurrentQuestionIndex(), calculateRemainingTime(session));
+		return quizSessionMapper.toDetailResponse(session, quiz, user, calculateRemainingTime(session));
 	}
 
+	/**
+	 * Map QuizSession to QuizSessionSummaryResponse using MapStruct.
+	 */
 	private QuizSessionSummaryResponse mapToSummary(QuizSession session) {
 		Quiz quiz = quizRepository.findById(session.getQuizId()).orElse(null);
-
-		return new QuizSessionSummaryResponse(session.getId(), session.getQuizId(),
-				quiz != null ? quiz.getTitle() : null, quiz != null ? quiz.getThumbnailUrl() : null,
-				session.getStatus(), session.getStartedAt(), session.getFinishedAt(), session.getTimeSpentSeconds(),
-				session.getTotalQuestions(), session.getCorrectAnswers(), session.getScore(), session.getIsPassed());
+		return quizSessionMapper.toSummaryResponse(session, quiz);
 	}
 
+	/**
+	 * Build leaderboard response using MapStruct.
+	 */
 	private LeaderboardResponse buildLeaderboard(Quiz quiz, List<QuizSession> sessions) {
 		AtomicInteger rank = new AtomicInteger(1);
 
 		List<LeaderboardResponse.LeaderboardEntry> entries = sessions.stream().map(session -> {
 			User user = userRepository.findById(session.getUserId()).orElse(null);
-			return new LeaderboardResponse.LeaderboardEntry(rank.getAndIncrement(), session.getUserId(),
-					user != null ? user.getDisplayName() : "Unknown", user != null ? user.getAvatar() : null,
-					session.getScore(), session.getPointsEarned(), session.getCorrectAnswers(),
-					session.getTotalQuestions(), session.getTimeSpentSeconds(), session.getFinishedAt());
+			return quizSessionMapper.toLeaderboardEntry(session, user, rank.getAndIncrement());
 		}).toList();
 
-		return new LeaderboardResponse(quiz.getId(), quiz.getTitle(), entries.size(), entries);
+		return quizSessionMapper.toLeaderboardResponse(quiz, entries);
 	}
 
 }

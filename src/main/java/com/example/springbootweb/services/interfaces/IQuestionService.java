@@ -2,6 +2,7 @@ package com.example.springbootweb.services.interfaces;
 
 import com.example.springbootweb.entities.dtos.questions.CreateQuestionRequest;
 import com.example.springbootweb.entities.dtos.questions.QuestionDetailResponse;
+import com.example.springbootweb.entities.dtos.questions.QuestionFilter;
 import com.example.springbootweb.entities.dtos.questions.QuestionSummaryResponse;
 import com.example.springbootweb.entities.dtos.questions.UpdateQuestionRequest;
 import com.example.springbootweb.entities.enums.QuestionType;
@@ -12,9 +13,9 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IQuestionService {
-    List<QuestionSummaryResponse> getAllQuestions();
+    List<QuestionSummaryResponse> getAllQuestions(QuestionFilter filter);
 
-    Page<QuestionSummaryResponse> getPagedQuestions(Integer page, Integer size);
+    Page<QuestionSummaryResponse> getPagedQuestions(Integer page, Integer size, QuestionFilter filter);
 
     QuestionDetailResponse getQuestionById(UUID id);
 

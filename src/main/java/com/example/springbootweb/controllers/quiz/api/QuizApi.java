@@ -6,9 +6,11 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 import com.example.springbootweb.entities.dtos.quizzes.CreateQuizRequest;
 import com.example.springbootweb.entities.dtos.quizzes.QuizDetailResponse;
+import com.example.springbootweb.entities.dtos.quizzes.QuizFilter;
 import com.example.springbootweb.entities.dtos.quizzes.QuizSummaryResponse;
 import com.example.springbootweb.entities.dtos.quizzes.UpdateQuizRequest;
 
@@ -31,31 +33,34 @@ public interface QuizApi {
     // ==================== READ Operations ====================
 
     @Operation(summary = "Get all quizzes", 
-               description = "Retrieve a list of all quizzes in the system")
+               description = "Retrieve a list of all quizzes in the system with optional filtering")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Successfully retrieved quiz list"),
         @ApiResponse(responseCode = "204", description = "No quizzes found")
     })
-    ResponseEntity<List<QuizSummaryResponse>> getAllQuizzes();
+    ResponseEntity<List<QuizSummaryResponse>> getAllQuizzes(
+            @ModelAttribute QuizFilter filter);
 
     @Operation(summary = "Get paged quizzes", 
-               description = "Retrieve quizzes with pagination support")
+               description = "Retrieve quizzes with pagination and optional filtering support")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Successfully retrieved paged quizzes")
     })
     ResponseEntity<Page<QuizSummaryResponse>> getPagedQuizzes(
             @Parameter(description = "Page number (0-based)", example = "0") Integer page,
-            @Parameter(description = "Page size", example = "10") Integer size);
+            @Parameter(description = "Page size", example = "10") Integer size,
+            @ModelAttribute QuizFilter filter);
 
     @Operation(summary = "Get paged quiz details", 
-               description = "Retrieve detailed quiz information with pagination support")
+               description = "Retrieve detailed quiz information with pagination and optional filtering support")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Successfully retrieved paged quiz details",
             content = @Content(schema = @Schema(implementation = Page.class)))
     })
     ResponseEntity<Page<QuizDetailResponse>> getPagedQuizDetail(
             @Parameter(description = "Page number (0-based)", example = "0") Integer page,
-            @Parameter(description = "Page size", example = "10") Integer size);
+            @Parameter(description = "Page size", example = "10") Integer size,
+            @ModelAttribute QuizFilter filter);
 
     @Operation(summary = "Get quiz by ID", 
                description = "Retrieve detailed information about a specific quiz")

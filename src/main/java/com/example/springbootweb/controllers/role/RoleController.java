@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.springbootweb.controllers.role.api.RoleApi;
 import com.example.springbootweb.entities.dtos.roles.CreateRoleRequest;
 import com.example.springbootweb.entities.dtos.roles.RoleDetailResponse;
+import com.example.springbootweb.entities.dtos.roles.RoleFilter;
 import com.example.springbootweb.entities.dtos.roles.RoleSummaryResponse;
 import com.example.springbootweb.entities.dtos.roles.UpdateRoleRequest;
 import com.example.springbootweb.services.interfaces.IRoleService;
@@ -46,9 +48,10 @@ public class RoleController implements RoleApi {
 
     @Override
     @GetMapping
-    public ResponseEntity<List<RoleSummaryResponse>> getAllRoles() {
-        log.info("GET /api/roles");
-        List<RoleSummaryResponse> roles = roleService.getAllRoles();
+    public ResponseEntity<List<RoleSummaryResponse>> getAllRoles(
+            @ModelAttribute RoleFilter filter) {
+        log.info("GET /api/roles with filter: {}", filter);
+        List<RoleSummaryResponse> roles = roleService.getAllRoles(filter);
         if (roles.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -59,9 +62,10 @@ public class RoleController implements RoleApi {
     @GetMapping("/paged")
     public ResponseEntity<Page<RoleSummaryResponse>> getPagedRoles(
             @RequestParam(name = "page", defaultValue = "0") Integer page,
-            @RequestParam(name = "size", defaultValue = "10") Integer size) {
-        log.info("GET /api/roles/paged - page: {}, size: {}", page, size);
-        return ResponseEntity.ok(roleService.getPagedRoles(page, size));
+            @RequestParam(name = "size", defaultValue = "10") Integer size,
+            @ModelAttribute RoleFilter filter) {
+        log.info("GET /api/roles/paged - page: {}, size: {}, filter: {}", page, size, filter);
+        return ResponseEntity.ok(roleService.getPagedRoles(page, size, filter));
     }
 
     @Override

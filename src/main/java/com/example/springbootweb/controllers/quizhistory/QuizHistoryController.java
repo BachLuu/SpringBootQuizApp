@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.springbootweb.controllers.quizhistory.api.QuizHistoryApi;
 import com.example.springbootweb.entities.dtos.quizsessions.LeaderboardResponse;
+import com.example.springbootweb.entities.dtos.quizsessions.QuizSessionFilter;
 import com.example.springbootweb.entities.dtos.quizsessions.QuizSessionSummaryResponse;
 import com.example.springbootweb.services.interfaces.IAuthService;
 import com.example.springbootweb.services.interfaces.IQuizSessionService;
@@ -46,29 +48,37 @@ public class QuizHistoryController implements QuizHistoryApi {
 	@Override
 	@GetMapping("/me")
 	public ResponseEntity<List<QuizSessionSummaryResponse>> getMyHistory(
+			@ModelAttribute QuizSessionFilter quizSessionFilter,
 			@AuthenticationPrincipal UserDetails userDetails) {
-		log.debug("GET /api/quiz-history/me");
-		List<QuizSessionSummaryResponse> history = quizSessionService
-			.getUserHistory(authService.getUserIdByEmail(userDetails.getUsername()));
+		log.debug("GET /api/quiz-history/me with filters");
+		UUID userId = authService.getUserIdByEmail(userDetails.getUsername());
+		List<QuizSessionSummaryResponse> history = quizSessionService.getUserHistory(
+				userId, quizSessionFilter);
 		return history.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(history);
 	}
 
 	@Override
 	@GetMapping("/me/paged")
 	public ResponseEntity<Page<QuizSessionSummaryResponse>> getMyHistoryPaged(
-			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size,
+			@ModelAttribute QuizSessionFilter quizSessionFilter,
 			@AuthenticationPrincipal UserDetails userDetails) {
-		log.debug("GET /api/quiz-history/me/paged - page: {}, size: {}", page, size);
-		return ResponseEntity
-			.ok(quizSessionService.getUserHistory(authService.getUserIdByEmail(userDetails.getUsername()), page, size));
+		log.debug("GET /api/quiz-history/me/paged - page: {}, size: {} with filters", page, size);
+		UUID userId = authService.getUserIdByEmail(userDetails.getUsername());
+		return ResponseEntity.ok(quizSessionService.getUserHistory(
+				userId, page, size, quizSessionFilter));
 	}
 
 	@Override
 	@GetMapping("/user/{userId}")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ResponseEntity<List<QuizSessionSummaryResponse>> getUserHistory(@PathVariable UUID userId) {
-		log.info("GET /api/quiz-history/user/{} (Admin)", userId);
-		List<QuizSessionSummaryResponse> history = quizSessionService.getUserHistory(userId);
+	public ResponseEntity<List<QuizSessionSummaryResponse>> getUserHistory(
+			@PathVariable UUID userId,
+			@ModelAttribute QuizSessionFilter quizSessionFilter) {
+		log.info("GET /api/quiz-history/user/{} (Admin) with filters", userId);
+		List<QuizSessionSummaryResponse> history = quizSessionService.getUserHistory(
+				userId, quizSessionFilter);
 		return history.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(history);
 	}
 

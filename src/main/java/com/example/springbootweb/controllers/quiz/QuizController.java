@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.springbootweb.controllers.quiz.api.QuizApi;
 import com.example.springbootweb.entities.dtos.quizzes.CreateQuizRequest;
 import com.example.springbootweb.entities.dtos.quizzes.QuizDetailResponse;
+import com.example.springbootweb.entities.dtos.quizzes.QuizFilter;
 import com.example.springbootweb.entities.dtos.quizzes.QuizSummaryResponse;
 import com.example.springbootweb.entities.dtos.quizzes.UpdateQuizRequest;
 import com.example.springbootweb.services.interfaces.IQuizService;
@@ -46,9 +48,10 @@ public class QuizController implements QuizApi {
 
     @Override
     @GetMapping
-    public ResponseEntity<List<QuizSummaryResponse>> getAllQuizzes() {
-        log.info("GET /api/quizzes - Fetching all quizzes");
-        List<QuizSummaryResponse> quizzes = quizService.getAllQuizzes();
+    public ResponseEntity<List<QuizSummaryResponse>> getAllQuizzes(
+            @ModelAttribute QuizFilter filter) {
+        log.info("GET /api/quizzes - Fetching all quizzes with filter: {}", filter);
+        List<QuizSummaryResponse> quizzes = quizService.getAllQuizzes(filter);
         if (quizzes.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -59,18 +62,20 @@ public class QuizController implements QuizApi {
     @GetMapping("/paged")
     public ResponseEntity<Page<QuizSummaryResponse>> getPagedQuizzes(
             @RequestParam(name = "page", defaultValue = "0") Integer page,
-            @RequestParam(name = "size", defaultValue = "10") Integer size) {
-        log.info("GET /api/quizzes/paged - page: {}, size: {}", page, size);
-        return ResponseEntity.ok(quizService.getPagedQuizzes(page, size));
+            @RequestParam(name = "size", defaultValue = "10") Integer size,
+            @ModelAttribute QuizFilter filter) {
+        log.info("GET /api/quizzes/paged - page: {}, size: {}, filter: {}", page, size, filter);
+        return ResponseEntity.ok(quizService.getPagedQuizzes(page, size, filter));
     }
 
     @Override
     @GetMapping("/paged-detail")
     public ResponseEntity<Page<QuizDetailResponse>> getPagedQuizDetail(
             @RequestParam(name = "page", defaultValue = "0") Integer page,
-            @RequestParam(name = "size", defaultValue = "10") Integer size) {
-        log.info("GET /api/quizzes/paged-detail - page: {}, size: {}", page, size);
-        return ResponseEntity.ok(quizService.getPagedQuizDetail(page, size));
+            @RequestParam(name = "size", defaultValue = "10") Integer size,
+            @ModelAttribute QuizFilter filter) {
+        log.info("GET /api/quizzes/paged-detail - page: {}, size: {}, filter: {}", page, size, filter);
+        return ResponseEntity.ok(quizService.getPagedQuizDetail(page, size, filter));
     }
 
     @Override

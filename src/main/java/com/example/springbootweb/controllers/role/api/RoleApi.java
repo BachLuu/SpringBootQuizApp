@@ -6,9 +6,11 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 import com.example.springbootweb.entities.dtos.roles.CreateRoleRequest;
 import com.example.springbootweb.entities.dtos.roles.RoleDetailResponse;
+import com.example.springbootweb.entities.dtos.roles.RoleFilter;
 import com.example.springbootweb.entities.dtos.roles.RoleSummaryResponse;
 import com.example.springbootweb.entities.dtos.roles.UpdateRoleRequest;
 
@@ -31,21 +33,23 @@ public interface RoleApi {
     // ==================== READ Operations ====================
 
     @Operation(summary = "Get all roles", 
-               description = "Retrieve a list of all roles in the system")
+               description = "Retrieve a list of all roles in the system with optional filtering")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Successfully retrieved role list"),
         @ApiResponse(responseCode = "204", description = "No roles found")
     })
-    ResponseEntity<List<RoleSummaryResponse>> getAllRoles();
+    ResponseEntity<List<RoleSummaryResponse>> getAllRoles(
+            @ModelAttribute RoleFilter filter);
 
     @Operation(summary = "Get paged roles", 
-               description = "Retrieve roles with pagination support")
+               description = "Retrieve roles with pagination and optional filtering support")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Successfully retrieved paged roles")
     })
     ResponseEntity<Page<RoleSummaryResponse>> getPagedRoles(
             @Parameter(description = "Page number (0-based)", example = "0") Integer page,
-            @Parameter(description = "Page size", example = "10") Integer size);
+            @Parameter(description = "Page size", example = "10") Integer size,
+            @ModelAttribute RoleFilter filter);
 
     @Operation(summary = "Get role by ID", 
                description = "Retrieve detailed information about a specific role")

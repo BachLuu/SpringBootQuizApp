@@ -28,8 +28,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Represents a quiz attempt session by a user.
- * Tracks the progress, timing, and results of a quiz attempt.
+ * Represents a quiz attempt session by a user. Tracks the progress, timing, and results
+ * of a quiz attempt.
  */
 @Entity
 @Table(name = "quiz_sessions")
@@ -39,133 +39,134 @@ import lombok.NoArgsConstructor;
 @Builder
 public class QuizSession {
 
-    @Id
-    @UuidGenerator
-    private UUID id;
+	@Id
+	@UuidGenerator
+	private UUID id;
 
-    /**
-     * The user taking the quiz
-     */
-    @NotNull
-    @Column(name = "user_id", nullable = false)
-    private UUID userId;
+	/**
+	 * The user taking the quiz
+	 */
+	@NotNull
+	@Column(name = "user_id", nullable = false)
+	private UUID userId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
-    private User user;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id", insertable = false, updatable = false)
+	private User user;
 
-    /**
-     * The quiz being taken
-     */
-    @NotNull
-    @Column(name = "quiz_id", nullable = false)
-    private UUID quizId;
+	/**
+	 * The quiz being taken
+	 */
+	@NotNull
+	@Column(name = "quiz_id", nullable = false)
+	private UUID quizId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "quiz_id", insertable = false, updatable = false)
-    private Quiz quiz;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "quiz_id", insertable = false, updatable = false)
+	private Quiz quiz;
 
-    /**
-     * Current status of the session
-     */
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    @Builder.Default
-    private QuizSessionStatus status = QuizSessionStatus.NOT_STARTED;
+	/**
+	 * Current status of the session
+	 */
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false, length = 20)
+	@Builder.Default
+	private QuizSessionStatus status = QuizSessionStatus.NOT_STARTED;
 
-    /**
-     * When the session was created
-     */
-    @NotNull
-    @Column(name = "created_at", nullable = false)
-    @Builder.Default
-    private LocalDateTime createdAt = LocalDateTime.now();
+	/**
+	 * When the session was created
+	 */
+	@NotNull
+	@Column(name = "created_at", nullable = false)
+	@Builder.Default
+	private LocalDateTime createdAt = LocalDateTime.now();
 
-    /**
-     * When the user actually started the quiz
-     */
-    @Column(name = "started_at")
-    private LocalDateTime startedAt;
+	/**
+	 * When the user actually started the quiz
+	 */
+	@Column(name = "started_at")
+	private LocalDateTime startedAt;
 
-    /**
-     * When the quiz was submitted/finished
-     */
-    @Column(name = "finished_at")
-    private LocalDateTime finishedAt;
+	/**
+	 * When the quiz was submitted/finished
+	 */
+	@Column(name = "finished_at")
+	private LocalDateTime finishedAt;
 
-    /**
-     * When the quiz should expire (startedAt + quiz.duration)
-     */
-    @Column(name = "expires_at")
-    private LocalDateTime expiresAt;
+	/**
+	 * When the quiz should expire (startedAt + quiz.duration)
+	 */
+	@Column(name = "expires_at")
+	private LocalDateTime expiresAt;
 
-    /**
-     * Total time spent in seconds (excluding paused time)
-     */
-    @Column(name = "time_spent_seconds")
-    @Builder.Default
-    private Integer timeSpentSeconds = 0;
+	/**
+	 * Total time spent in seconds (excluding paused time)
+	 */
+	@Column(name = "time_spent_seconds")
+	@Builder.Default
+	private Integer timeSpentSeconds = 0;
 
-    /**
-     * Number of correct answers
-     */
-    @Column(name = "correct_answers")
-    @Builder.Default
-    private Integer correctAnswers = 0;
+	/**
+	 * Number of correct answers
+	 */
+	@Column(name = "correct_answers")
+	@Builder.Default
+	private Integer correctAnswers = 0;
 
-    /**
-     * Total number of questions in this session
-     */
-    @Column(name = "total_questions")
-    @Builder.Default
-    private Integer totalQuestions = 0;
+	/**
+	 * Total number of questions in this session
+	 */
+	@Column(name = "total_questions")
+	@Builder.Default
+	private Integer totalQuestions = 0;
 
-    /**
-     * Number of questions answered
-     */
-    @Column(name = "answered_questions")
-    @Builder.Default
-    private Integer answeredQuestions = 0;
+	/**
+	 * Number of questions answered
+	 */
+	@Column(name = "answered_questions")
+	@Builder.Default
+	private Integer answeredQuestions = 0;
 
-    /**
-     * Score as percentage (0-100)
-     */
-    @Column(name = "score", precision = 5, scale = 2)
-    @Builder.Default
-    private BigDecimal score = BigDecimal.ZERO;
+	/**
+	 * Score as percentage (0-100)
+	 */
+	@Column(name = "score", precision = 5, scale = 2)
+	@Builder.Default
+	private BigDecimal score = BigDecimal.ZERO;
 
-    /**
-     * Raw score (points earned)
-     */
-    @Column(name = "points_earned", precision = 10, scale = 2)
-    @Builder.Default
-    private BigDecimal pointsEarned = BigDecimal.ZERO;
+	/**
+	 * Raw score (points earned)
+	 */
+	@Column(name = "points_earned", precision = 10, scale = 2)
+	@Builder.Default
+	private BigDecimal pointsEarned = BigDecimal.ZERO;
 
-    /**
-     * Maximum possible points
-     */
-    @Column(name = "max_points", precision = 10, scale = 2)
-    @Builder.Default
-    private BigDecimal maxPoints = BigDecimal.ZERO;
+	/**
+	 * Maximum possible points
+	 */
+	@Column(name = "max_points", precision = 10, scale = 2)
+	@Builder.Default
+	private BigDecimal maxPoints = BigDecimal.ZERO;
 
-    /**
-     * Whether the user passed (score >= passing threshold)
-     */
-    @Column(name = "is_passed")
-    private Boolean isPassed;
+	/**
+	 * Whether the user passed (score >= passing threshold)
+	 */
+	@Column(name = "is_passed")
+	private Boolean isPassed;
 
-    /**
-     * Current question index (for tracking progress)
-     */
-    @Column(name = "current_question_index")
-    @Builder.Default
-    private Integer currentQuestionIndex = 0;
+	/**
+	 * Current question index (for tracking progress)
+	 */
+	@Column(name = "current_question_index")
+	@Builder.Default
+	private Integer currentQuestionIndex = 0;
 
-    /**
-     * User's answers for this session
-     */
-    @OneToMany(mappedBy = "quizSession", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @Builder.Default
-    private List<SessionAnswer> sessionAnswers = new ArrayList<>();
+	/**
+	 * User's answers for this session
+	 */
+	@OneToMany(mappedBy = "quizSession", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@Builder.Default
+	private List<SessionAnswer> sessionAnswers = new ArrayList<>();
+
 }

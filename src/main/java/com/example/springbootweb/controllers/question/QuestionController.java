@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.springbootweb.controllers.question.api.QuestionApi;
 import com.example.springbootweb.entities.dtos.questions.CreateQuestionRequest;
 import com.example.springbootweb.entities.dtos.questions.QuestionDetailResponse;
+import com.example.springbootweb.entities.dtos.questions.QuestionFilter;
 import com.example.springbootweb.entities.dtos.questions.QuestionSummaryResponse;
 import com.example.springbootweb.entities.dtos.questions.UpdateQuestionRequest;
 import com.example.springbootweb.entities.enums.QuestionType;
@@ -47,9 +49,10 @@ public class QuestionController implements QuestionApi {
 
     @Override
     @GetMapping
-    public ResponseEntity<List<QuestionSummaryResponse>> getAllQuestions() {
-        log.info("GET /api/questions");
-        List<QuestionSummaryResponse> questions = questionService.getAllQuestions();
+    public ResponseEntity<List<QuestionSummaryResponse>> getAllQuestions(
+            @ModelAttribute QuestionFilter filter) {
+        log.info("GET /api/questions with filter: {}", filter);
+        List<QuestionSummaryResponse> questions = questionService.getAllQuestions(filter);
         if (questions.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -60,9 +63,10 @@ public class QuestionController implements QuestionApi {
     @GetMapping("/paged")
     public ResponseEntity<Page<QuestionSummaryResponse>> getPagedQuestions(
             @RequestParam(name = "page", defaultValue = "0") Integer page,
-            @RequestParam(name = "size", defaultValue = "10") Integer size) {
-        log.info("GET /api/questions/paged - page: {}, size: {}", page, size);
-        return ResponseEntity.ok(questionService.getPagedQuestions(page, size));
+            @RequestParam(name = "size", defaultValue = "10") Integer size,
+            @ModelAttribute QuestionFilter filter) {
+        log.info("GET /api/questions/paged - page: {}, size: {}, filter: {}", page, size, filter);
+        return ResponseEntity.ok(questionService.getPagedQuestions(page, size, filter));
     }
 
     @Override

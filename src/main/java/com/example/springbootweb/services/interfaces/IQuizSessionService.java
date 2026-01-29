@@ -7,7 +7,8 @@ import org.springframework.data.domain.Page;
 
 import com.example.springbootweb.entities.dtos.quizsessions.LeaderboardResponse;
 import com.example.springbootweb.entities.dtos.quizsessions.QuizQuestionResponse;
-import com.example.springbootweb.entities.dtos.quizsessions.QuizSessionResponse;
+import com.example.springbootweb.entities.dtos.quizsessions.QuizSessionFilter;
+import com.example.springbootweb.entities.dtos.quizsessions.QuizSessionDetailResponse;
 import com.example.springbootweb.entities.dtos.quizsessions.QuizSessionResultResponse;
 import com.example.springbootweb.entities.dtos.quizsessions.QuizSessionSummaryResponse;
 import com.example.springbootweb.entities.dtos.quizsessions.SubmitAnswerRequest;
@@ -29,7 +30,7 @@ public interface IQuizSessionService {
      * @param userId The ID of the user starting the quiz
      * @return QuizSessionResponse with session details
      */
-    QuizSessionResponse startSession(UUID quizId, UUID userId);
+    QuizSessionDetailResponse startSession(UUID quizId, UUID userId);
 
     /**
      * Get current session status and progress.
@@ -38,7 +39,7 @@ public interface IQuizSessionService {
      * @param userId The user ID (for authorization)
      * @return QuizSessionResponse with current status
      */
-    QuizSessionResponse getSession(UUID sessionId, UUID userId);
+    QuizSessionDetailResponse getSession(UUID sessionId, UUID userId);
 
     /**
      * Pause an in-progress session (if allowed).
@@ -47,7 +48,7 @@ public interface IQuizSessionService {
      * @param userId The user ID
      * @return QuizSessionResponse with updated status
      */
-    QuizSessionResponse pauseSession(UUID sessionId, UUID userId);
+    QuizSessionDetailResponse pauseSession(UUID sessionId, UUID userId);
 
     /**
      * Resume a paused session.
@@ -56,7 +57,7 @@ public interface IQuizSessionService {
      * @param userId The user ID
      * @return QuizSessionResponse with updated status
      */
-    QuizSessionResponse resumeSession(UUID sessionId, UUID userId);
+    QuizSessionDetailResponse resumeSession(UUID sessionId, UUID userId);
 
     /**
      * Abandon/cancel a session.
@@ -138,22 +139,46 @@ public interface IQuizSessionService {
     // ==================== History & Leaderboard ====================
 
     /**
-     * Get user's quiz session history.
+     * Get user's quiz session history with optional filters.
+     * Service builds Specification internally from filter parameters.
      *
      * @param userId The user ID
+     * @param quizId Filter by quiz ID (optional)
+     * @param statuses Filter by session statuses (optional)
+     * @param startedAfter Filter sessions started after (optional)
+     * @param startedBefore Filter sessions started before (optional)
+     * @param minScore Filter by minimum score (optional)
+     * @param maxScore Filter by maximum score (optional)
+     * @param isPassed Filter by pass status (optional)
+     * @param quizTitleKeyword Search quiz title keyword (optional)
      * @return List of quiz session summaries
      */
-    List<QuizSessionSummaryResponse> getUserHistory(UUID userId);
+    List<QuizSessionSummaryResponse> getUserHistory(
+            UUID userId,
+            QuizSessionFilter quizSessionFilter);
 
     /**
-     * Get user's quiz session history with pagination.
+     * Get user's quiz session history with pagination and optional filters.
+     * Service builds Specification internally from filter parameters.
      *
      * @param userId The user ID
      * @param page Page number
      * @param size Page size
+     * @param quizId Filter by quiz ID (optional)
+     * @param statuses Filter by session statuses (optional)
+     * @param startedAfter Filter sessions started after (optional)
+     * @param startedBefore Filter sessions started before (optional)
+     * @param minScore Filter by minimum score (optional)
+     * @param maxScore Filter by maximum score (optional)
+     * @param isPassed Filter by pass status (optional)
+     * @param quizTitleKeyword Search quiz title keyword (optional)
      * @return Page of quiz session summaries
      */
-    Page<QuizSessionSummaryResponse> getUserHistory(UUID userId, int page, int size);
+    Page<QuizSessionSummaryResponse> getUserHistory(
+            UUID userId,
+            int page,
+            int size,
+            QuizSessionFilter quizSessionFilter);
 
     /**
      * Get leaderboard for a quiz.

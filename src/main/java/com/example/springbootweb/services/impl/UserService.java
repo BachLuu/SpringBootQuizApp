@@ -4,6 +4,7 @@ import com.example.springbootweb.entities.constants.ErrorMessage;
 import com.example.springbootweb.entities.dtos.users.CreateUserRequest;
 import com.example.springbootweb.entities.dtos.users.UpdateUserRequest;
 import com.example.springbootweb.entities.dtos.users.UserDetailResponse;
+import com.example.springbootweb.entities.dtos.users.UserFilter;
 import com.example.springbootweb.entities.dtos.users.UserSummaryResponse;
 import com.example.springbootweb.entities.models.Role;
 import com.example.springbootweb.entities.models.User;
@@ -12,12 +13,15 @@ import com.example.springbootweb.exceptions.ResourceNotFoundException;
 import com.example.springbootweb.mappers.UserMapper;
 import com.example.springbootweb.repositories.RoleRepository;
 import com.example.springbootweb.repositories.UserRepository;
+import com.example.springbootweb.repositories.specifications.UserSpecifications;
 import com.example.springbootweb.services.interfaces.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,9 +44,10 @@ public class UserService implements IUserService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<UserSummaryResponse> getAllUsers() {
-        logger.info("Fetching all users");
-        List<User> users = userRepository.findAll();
+    public List<UserSummaryResponse> getAllUsers(UserFilter filter) {
+        logger.info("Fetching all users with filter: {}", filter);
+        Specification<User> spec = UserSpecifications.fromFilter(filter);
+        List<User> users = userRepository.findAll(spec, Sort.by(Sort.Direction.ASC, "email"));
         return users.stream()
                 .map(userMapper::toSummary)
                 .collect(Collectors.toList());
@@ -50,9 +55,11 @@ public class UserService implements IUserService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<UserSummaryResponse> getPagedUsers(Integer page, Integer size) {
+    public Page<UserSummaryResponse> getPagedUsers(Integer page, Integer size, UserFilter filter) {
         int pageNumber = page == null ? 0 : page;
         int pageSize = size == null ? 10 : size;
+
+        logger.info("Fetching paged users - page: {}, size: {}, filter: {}", pageNumber, pageSize, filter);
 
         if (pageNumber < 0) {
             throw new BadRequestException("Page must be >= 0");
@@ -61,7 +68,8 @@ public class UserService implements IUserService {
             throw new BadRequestException("Size must be between 1 and 100");
         }
 
-        Page<User> userPage = userRepository.findAll(PageRequest.of(pageNumber, pageSize));
+        Specification<User> spec = UserSpecifications.fromFilter(filter);
+        Page<User> userPage = userRepository.findAll(spec, PageRequest.of(pageNumber, pageSize));
         return userPage.map(userMapper::toSummary);
     }
 

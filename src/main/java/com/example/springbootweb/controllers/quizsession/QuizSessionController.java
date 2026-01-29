@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.springbootweb.controllers.quizsession.api.QuizSessionApi;
 import com.example.springbootweb.entities.dtos.quizsessions.QuizQuestionResponse;
-import com.example.springbootweb.entities.dtos.quizsessions.QuizSessionResponse;
+import com.example.springbootweb.entities.dtos.quizsessions.QuizSessionDetailResponse;
 import com.example.springbootweb.entities.dtos.quizsessions.QuizSessionResultResponse;
 import com.example.springbootweb.entities.dtos.quizsessions.SubmitAnswerRequest;
 import com.example.springbootweb.entities.dtos.quizsessions.SubmitAnswerResponse;
@@ -49,7 +49,7 @@ public class QuizSessionController implements QuizSessionApi {
 
     @Override
     @PostMapping("/start/{quizId}")
-    public ResponseEntity<QuizSessionResponse> startSession(
+    public ResponseEntity<QuizSessionDetailResponse> startSession(
             @PathVariable UUID quizId,
             @AuthenticationPrincipal UserDetails userDetails) {
         log.info("POST /api/quiz-sessions/start/{}", quizId);
@@ -60,7 +60,7 @@ public class QuizSessionController implements QuizSessionApi {
 
     @Override
     @GetMapping("/{sessionId}")
-    public ResponseEntity<QuizSessionResponse> getSession(
+    public ResponseEntity<QuizSessionDetailResponse> getSession(
             @PathVariable UUID sessionId,
             @AuthenticationPrincipal UserDetails userDetails) {
         log.debug("GET /api/quiz-sessions/{}", sessionId);
@@ -69,7 +69,7 @@ public class QuizSessionController implements QuizSessionApi {
 
     @Override
     @PutMapping("/{sessionId}/pause")
-    public ResponseEntity<QuizSessionResponse> pauseSession(
+    public ResponseEntity<QuizSessionDetailResponse> pauseSession(
             @PathVariable UUID sessionId,
             @AuthenticationPrincipal UserDetails userDetails) {
         log.info("PUT /api/quiz-sessions/{}/pause", sessionId);
@@ -78,7 +78,7 @@ public class QuizSessionController implements QuizSessionApi {
 
     @Override
     @PutMapping("/{sessionId}/resume")
-    public ResponseEntity<QuizSessionResponse> resumeSession(
+    public ResponseEntity<QuizSessionDetailResponse> resumeSession(
             @PathVariable UUID sessionId,
             @AuthenticationPrincipal UserDetails userDetails) {
         log.info("PUT /api/quiz-sessions/{}/resume", sessionId);

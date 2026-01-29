@@ -7,12 +7,17 @@ import org.springframework.data.domain.Page;
 
 import com.example.springbootweb.entities.dtos.quizzes.CreateQuizRequest;
 import com.example.springbootweb.entities.dtos.quizzes.QuizDetailResponse;
+import com.example.springbootweb.entities.dtos.quizzes.QuizFilter;
 import com.example.springbootweb.entities.dtos.quizzes.QuizSummaryResponse;
 import com.example.springbootweb.entities.dtos.quizzes.UpdateQuizRequest;
 
 public interface IQuizService {
 
-    List<QuizSummaryResponse> getAllQuizzes();
+    List<QuizSummaryResponse> getAllQuizzes(QuizFilter filter);
+
+    Page<QuizSummaryResponse> getPagedQuizzes(Integer page, Integer size, QuizFilter filter);
+
+    Page<QuizDetailResponse> getPagedQuizDetail(Integer page, Integer size, QuizFilter filter);
 
     QuizDetailResponse getQuizById(UUID id);
 
@@ -29,8 +34,4 @@ public interface IQuizService {
     void deleteQuiz(UUID id);
 
     long getTotalQuizzes();
-
-    Page<QuizSummaryResponse> getPagedQuizzes(Integer page, Integer size);
-
-    Page<QuizDetailResponse> getPagedQuizDetail(Integer page, Integer size);
 }

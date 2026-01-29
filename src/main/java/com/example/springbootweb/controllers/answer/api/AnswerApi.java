@@ -6,7 +6,9 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
+import com.example.springbootweb.entities.dtos.answers.AnswerFilter;
 import com.example.springbootweb.entities.dtos.answers.AnswerResponse;
 import com.example.springbootweb.entities.dtos.answers.AnswerSummaryResponse;
 import com.example.springbootweb.entities.dtos.answers.CreateAnswerRequest;
@@ -31,21 +33,23 @@ public interface AnswerApi {
     // ==================== READ Operations ====================
 
     @Operation(summary = "Get all answers", 
-               description = "Retrieve a list of all answers in the system")
+               description = "Retrieve a list of all answers in the system with optional filtering")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Successfully retrieved answer list"),
         @ApiResponse(responseCode = "204", description = "No answers found")
     })
-    ResponseEntity<List<AnswerSummaryResponse>> getAllAnswers();
+    ResponseEntity<List<AnswerSummaryResponse>> getAllAnswers(
+            @ModelAttribute AnswerFilter filter);
 
     @Operation(summary = "Get paged answers", 
-               description = "Retrieve answers with pagination support")
+               description = "Retrieve answers with pagination and optional filtering support")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Successfully retrieved paged answers")
     })
     ResponseEntity<Page<AnswerSummaryResponse>> getPagedAnswers(
             @Parameter(description = "Page number (0-based)", example = "0") Integer page,
-            @Parameter(description = "Page size", example = "10") Integer size);
+            @Parameter(description = "Page size", example = "10") Integer size,
+            @ModelAttribute AnswerFilter filter);
 
     @Operation(summary = "Get answer by ID", 
                description = "Retrieve detailed information about a specific answer")
