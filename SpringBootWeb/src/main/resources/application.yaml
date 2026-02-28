@@ -1,6 +1,12 @@
 spring:
   application:
     name: SpringBootWeb
+  cloud:
+    kubernetes:
+      discovery:
+        enabled: true
+      loadbalancer:
+        enabled: true
 
   config:
     import: optional:classpath:application-local.yaml
@@ -59,3 +65,18 @@ jwt:
 logging:
   level:
     org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+
+app:
+  services:
+    email:
+      # Định dạng: http://<K8S_SERVICE_NAME>:<PORT>
+      url: http://email-service:8080
+
+# Cấu hình "cầu chì" Resilience4j
+resilience4j:
+  circuitbreaker:
+    instances:
+      email-service:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s

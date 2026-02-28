@@ -31,7 +31,7 @@ services:
     secrets:
       - db-password
     volumes:
-      - db-data:/var/lib/postgresql
+      - /home/LuuBach/Docker\ Volume\ Data/postgres_data:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=QuizDB
       - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
@@ -42,10 +42,10 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-volumes:
-  db-data:
-    external: true
-    name: 5622e916cd8839a71cd5904f9f517e08586d42f954545036529da6b86df59a99
+# volumes:
+#   db-data:
+#     external: true
+#     name: 5622e916cd8839a71cd5904f9f517e08586d42f954545036529da6b86df59a99
 secrets:
   db-password:
     file: db/password.txt

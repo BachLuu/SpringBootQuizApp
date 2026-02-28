@@ -1,7 +1,5 @@
 package com.example.springbootweb.entities.constants;
 
-import java.util.UUID;
-
 public class ErrorMessage {
 
 	public static final String INVALID_REFRESH_TOKEN = "Invalid refresh token";
